@@ -1,116 +1,378 @@
-building qemux86 -rt (i586)
+vim: expandtab ts=4 sts=4 sw=4
 
-- edit local.conf and add:
-	PREFERRED_PROVIDER_virtual/kernel = "linux-yocto-rt"
-	IMAGE_INSTALL_append = " bash openssh openssh-ssh openssh-sshd util-linux"
-  NOTE: space after " before 'bash' is significant
-
-$ bitbake core-image-rt
-$ runqemu qemux86 tmp/deploy/images/core-image-rt-qemux86.ext3
-
-==============================================================================
-
-$ mkdir -p /home/trevor/devel/yocto/git-method
-$ cd /home/trevor/devel/yocto/git-method
-$ git clone git://git.yoctoproject.org/poky
-$ git clone --bare git://git.yoctoproject.org/linux-yocto-3.0 linux-yocto-3.0.git
-$ git clone linux-yocto-3.0.git linux-yocto-3.0
-
-$ cd poky
-$ git clone git://git.yoctoproject.org/poky-extras poky-extras
-$ git clone git://git.yoctoproject.org/meta-intel.git
-
-see http://www.openembedded.org/wiki/LayerIndex for more
-NOTE if you add meta-texasinstruments you'll probably have to add the following to conf/local.conf:
-	BBMASK = ".*/meta-ti/recipes-misc/"
-NOTE if you have added extra layers from the layer index you'll need to add them to conf/bblayers.conf
-     edit conf/bblayers.conf and add to the BBLAYERS variable:
-	/home/trevor/devel/yocto/git-method/poky/meta-gumstix \
-	/home/trevor/devel/yocto/git-method/poky/meta-texasinstruments \
-	/home/trevor/devel/yocto/git-method/poky/meta-xilinx \
-	...
-
-$ cd ..
-$ source poky/oe-init-build-env 
-You had no conf/local.conf file. This configuration file has therefore been
-created for you with some default values. You may wish to edit it to use a 
-different MACHINE (target hardware) or enable parallel build options to take 
-advantage of multiple cores for example. See the file for more information as 
-common configuration options are commented.
-
-The Yocto Project has extensive documentation about OE including a reference manual
-which can be found at:
-    http://yoctoproject.org/documentation
-
-For more information about OpenEmbedded see their website:
-    http://www.openembedded.org/
-
-You had no conf/bblayers.conf file. The configuration file has been created for
-you with some default values. To add additional metadata layers into your
-configuration please add entries to this file.
-
-The Yocto Project has extensive documentation about OE including a reference manual
-which can be found at:
-    http://yoctoproject.org/documentation
-
-For more information about OpenEmbedded see their website:
-    http://www.openembedded.org/
-
-
-
-### Shell environment set up for builds. ###
-
-You can now run 'bitbake <target>'
-
-Common targets are:
-    core-image-minimal
-    core-image-sato
-    meta-toolchain
-    meta-toolchain-sdk
-    adt-installer
-    meta-ide-support
-
-You can also run generated qemu images with a command like 'runqemu qemux86'
-
-(this creates and puts you into a directory named "build" by default, you can change the target dir)
-$ vi conf/local.conf
-	edit:
-		BB_NUMBER_THREADS
-		PARALLEL_MAKE
-		MACHINE
-		DL_DIR
-	add:
-		NO32LIBS = "1" (only necessary if glibc-devel-32 is installed on a 64-bit system)
-
-$ bitbake core-image-minimal
+Index:
+    15. Setting the size of an image
+    14. Ignoring .bbappends with no .bb
+    13. Ignoring certain configuration items
+    12. To obtain a list of supported output image types
+    11. Recipe dependency information
+    10. How to restart the build when a recipe fails
+     9. How to modify the autotool ./configure options
+     8. How to add packages to an image
+     7. How to build an image with an -rt kernel
+     6. Special notes for various layers
+     5. Quick start instructions
+     4. How can I just grab all the necessary files from the net?
+     3. What images are available from which to choose?
+     2. General task list
+     1. How to obtain the list of tasks
 
 ==============================================================================
-http://www.crashcourse.ca/wiki/index.php/Yocto_FAQ
+15. Setting the size of an image
 
- How can I ask bitbake to just fetch all the source I need if I want to build off-line later?
- $ bitbake -c fetchall <target-image>
+    The size of an image is calculated in
+
+        poky/meta/classes/image_types.bbclass
+
+    as follows:
+
+        runimagecmd ()
+            # Image generation code for image type ${type}
+            # The base_size gets calculated:
+            #  - initial size determined by `du -ks` of the IMAGE_ROOTFS
+            #  - then multiplied by the IMAGE_OVERHEAD_FACTOR
+            #  - tested against IMAGE_ROOTFS_SIZE
+            #  - round up ROOTFS_SIZE to IMAGE_ROOTFS_ALIGNMENT
+
+    Yocto is very smart with image sizes, it is able to calculate the size of
+    the image dynamically so that you'll never end up with a build which fails
+    simply because the image expands beyond some (random, buried) hard-coded
+    value of what the image size should be (several image-creation tools
+    require the image size to be specified upfront, by calculating this size
+    on the fly Yocto avoids a silly build failure).
+
+    After determining the image size, Yocto adds a little headroom and
+    builds the image based on those numbers. To increase the overhead
+    specify (for example):
+
+        IMAGE_OVERHEAD_FACTOR = "10"
+
+    or you could play with the IMAGE_ROOTFS_SIZE. To set the size for all
+    output images use (for example):
+
+        IMAGE_ROOTFS_SIZE = "8192"
+
+    or to set it for a specific image (and not others) use:
+
+        IMAGE_ROOTFS_SIZE_vmdk = "512000"
+
+    NOTE: that vmdk's grow dynamically, so although the final .vmdk won't
+          be the size specified, it will be able to grow to that size when
+          running. Other output image types (e.g. ext3) will be created of
+          the requested size.
+
+    NOTE: to build a vmdk image, internally other image types have to be
+          enabled too, so you'll see them in your tmp/deploy/images area
+
+    NOTE: the build system will set your image size to be the larger of its
+          calculated size and the size you specify. Therefore if you set
+          IMAGE_ROOTFS_SIZE[_<image>] too small, the system will bump up
+          the output size silently.
 
 ==============================================================================
-What images are available from which to choose?
+14. Ignoring .bbappends with no .bb
 
- http://www.yoctoproject.org/docs/current/poky-ref-manual/poky-ref-manual.html#ref-images
-  From within the poky Git repository, use the following command to list the supported images:
+    Sometimes you'll add a layer, start your build, and get:
 
-       $ ls meta*/recipes*/images/*.bb
-               
+        No recipes available for:
+            /home/trevor/devel/yocto/git-method/poky/meta-openembedded/meta-oe/recipes-qt/qt4/qt4-x11-free_4.8.4.bbappend
+            /home/trevor/devel/yocto/git-method/poky/meta-openembedded/meta-oe/recipes-qt/qt4/qt4-embedded_4.8.4.bbappend
 
-  These recipes reside in the meta/recipes-core/images, meta/recipes-extended/images,
-  meta/recipes-graphics/images, and meta/recipes-sato/images directories of your local
-  Yocto Project file structure (Git repository or extracted release tarball).
+        In bitbake you can create .bb files which are, generally, recipes. In
+        other parts of your configuration, instead of rewriting an entire
+        recipe, you can create a .bbappend which will modify the behaviour of
+        a previously defined .bb file. Sometimes a .bbappend file exists and
+        bitbake can't find the matching .bb to modify. By default bitbake
+        assumes there is a mistake in your configuration somewhere (i.e. you
+        probably forgot to add a layer or something). Sometimes this is
+        not a mistake. To get bitbake to just issue a warning but otherwise
+        continue with the build (by default a build would stop with an error
+        at this point) add the following to your configuration:
 
+            BB_DANGLINGAPPENDS_WARNONLY = "yes"
 
 ==============================================================================
-build steps:
+13. Ignoring certain configuration items
 
-	do_fetch
-	do_unpack
-	do_patch
-	do_configure
-	do_compile
-	do_install
-	do_package
+    To get bitbake to ignore certain recipes/paths/layers/patterns edit/set
+    a BBMASK variable in your configuration. For an example, see item #6.
+
+==============================================================================
+12. To obtain a list of supported output image types
+
+    Look in "poky/meta/classes/image_types.bbclass" for "IMAGE_TYPES":
+
+        # This variable is available to request which values are suitable for IMAGE_FSTYPES
+        IMAGE_TYPES = "jffs2 sum.jffs2 cramfs ext2 ext2.gz ext2.bz2 ext3
+        ext3.gz ext2.lzma btrfs live squashfs squashfs-lzma ubi tar tar.gz
+        tar.bz2 tar.xz cpio cpio.gz cpio.xz cpio.lzma vmdk elf"
+
+    To pick one or more images to generate, edit/create IMAGE_FSTYPES somewhere
+    in your configuration. For example, edit conf/local.conf and add:
+
+        IMAGE_FSTYPES = "vmdk"
+
+==============================================================================
+11. Recipe dependency information
+
+    A couple really nice ways to see recipe dependency information are:
+
+        for a full gui tool:
+            $ bitbake -u depexp -g <image>
+
+        or for just plain text files:
+            $ bitbake -g <image>
+
+==============================================================================
+10. How to restart the build when a recipe fails
+
+    $ bitbake -c clean <recipe>
+    $ bitbake <image>
+
+==============================================================================
+ 9. How to modify the autotool ./configure options
+
+    A forceful (but bad way) to modify the ./configure options for the
+    configure step of a recipe's build is to edit the recipe's *.bb file
+    and add/edit EXTRA_OECONF variable. E.g.:
+
+        EXTRA_OECONF = "--disable-docs"
+
+==============================================================================
+ 8. How to add packages to an image
+
+    edit local.conf and add:
+
+        IMAGE_INSTALL_append = " bash openssh openssh-ssh openssh-sshd util-linux"
+
+    NOTE: the space after the double-quote (i.e. before 'bash') is significant
+
+    It is important to know that in Yocto/OpenEmbedded terminology we are given
+    'recipes' and these 'recipes' generate 'packages'. Packages are files which
+    contain the products of a compile. When you compile some source you find on
+    the internet and perform a 'make install', lots of stuff gets installed to
+    the $DESTDIR/$prefix location. In many cases, lots of this stuff isn't
+    needed in an image. Examples of files installed during a 'make install'
+    might include headers, man/info pages, language files, development
+    libraries, tests, utility programs (i.e. to generate a configuration file),
+    server binaries, client binaries, etc. In order to make it easier to just
+    include only the files you want in an image, a good bitbake 'recipe' will
+    generate multiple 'packages'; you then select only the packages you want
+    included in your image.
+
+    Notice that the things you specify in "IMAGE_INSTALL"
+    (i.e. IMAGE_INSTALL_append) are _packages_ and not _recipes_.
+
+    To figure out which packages are created by a specific recipe:
+
+        $ bitbake -e <recipe> | grep "^PACKAGES="
+
+    $ bitbake -e python | grep "^PACKAGES="
+    PACKAGES="libpython2 python-dbg python-2to3 python-audio python-bsddb
+    python-codecs python-compile python-compiler python-compression
+    python-core python-crypt python-ctypes python-curses python-datetime
+    python-db python-debugger python-dev python-difflib
+    python-distutils-staticdev python-distutils python-doctest
+    python-elementtree python-email python-fcntl python-gdbm
+    python-hotshot python-html python-idle python-image python-io
+    python-json python-lang python-logging python-mailbox python-math
+    python-mime python-mmap python-multiprocessing python-netclient
+    python-netserver python-numbers python-pickle python-pkgutil
+    python-pprint python-profile python-pydoc python-re python-readline
+    python-resource python-robotparser python-shell python-smtpd
+    python-sqlite3 python-sqlite3-tests python-stringold python-subprocess
+    python-syslog python-terminal python-tests python-textutils
+    python-threading python-tkinter python-unittest python-unixadmin
+    python-xml python-xmlrpc python-zlib python-modules python-misc
+    python-man"
+
+    In order to find out which recipes are available (this varies depending
+    on which version of the Yocto Project you are using as well as which
+    layers you have added in your 'bblayers.conf' file):
+
+        $ bitbake -s
+
+    or
+
+        $ bitbake-layers show-recipes
+
+==============================================================================
+ 7. How to build an image with an -rt kernel
+
+    building qemux86 -rt (i586)
+
+    edit local.conf and add:
+
+        PREFERRED_PROVIDER_virtual/kernel = "linux-yocto-rt"
+
+    $ bitbake core-image-rt
+    $ runqemu qemux86 tmp/deploy/images/core-image-rt-qemux86.ext3
+
+==============================================================================
+ 6. Special notes for various layers
+
+  meta-texasinstruments:
+
+    if you add meta-texasinstruments you'll probably have to add the following
+    to conf/local.conf:
+
+            BBMASK = ".*/meta-ti/recipes-misc/"
+
+==============================================================================
+ 5. Quick start instructions
+
+    $ mkdir -p /home/trevor/devel/yocto/git-method
+    $ cd /home/trevor/devel/yocto/git-method
+    $ git clone git://git.yoctoproject.org/poky
+
+    $ cd poky
+    $ git clone git://git.yoctoproject.org/poky-extras poky-extras
+    $ git clone git://git.yoctoproject.org/meta-intel.git
+    (see http://www.openembedded.org/wiki/LayerIndex for more)
+
+    $ cd ..
+    $ source poky/oe-init-build-env 
+    (this creates and puts you into a directory named "build" by default,
+    you can change the target dir by specifying it at the end of the previous
+    line)
+
+    You had no conf/local.conf file. This configuration file has therefore been
+    created for you with some default values. You may wish to edit it to use a 
+    different MACHINE (target hardware) or enable parallel build options to take 
+    advantage of multiple cores for example. See the file for more information as 
+    common configuration options are commented.
+
+    The Yocto Project has extensive documentation about OE including a reference manual
+    which can be found at:
+        http://yoctoproject.org/documentation
+
+    For more information about OpenEmbedded see their website:
+        http://www.openembedded.org/
+
+    You had no conf/bblayers.conf file. The configuration file has been created for
+    you with some default values. To add additional metadata layers into your
+    configuration please add entries to this file.
+
+    The Yocto Project has extensive documentation about OE including a reference manual
+    which can be found at:
+        http://yoctoproject.org/documentation
+
+    For more information about OpenEmbedded see their website:
+        http://www.openembedded.org/
+
+
+
+    ### Shell environment set up for builds. ###
+
+    You can now run 'bitbake <target>'
+
+    Common targets are:
+        core-image-minimal
+        core-image-sato
+        meta-toolchain
+        meta-toolchain-sdk
+        adt-installer
+        meta-ide-support
+
+    You can also run generated qemu images with a command like 'runqemu qemux86'
+
+    $ vi conf/local.conf
+        edit:
+            BB_NUMBER_THREADS
+            PARALLEL_MAKE
+            MACHINE
+            DL_DIR
+        add:
+            NO32LIBS = "1" (only necessary if glibc-devel-32 is installed on a 64-bit system)
+
+    $ bitbake core-image-minimal
+
+==============================================================================
+ 4. How can I just grab all the necessary files from the net?
+
+    From http://www.crashcourse.ca/wiki/index.php/Yocto_FAQ:
+
+        How can I ask bitbake to just fetch all the source I need if I
+        want to build off-line later?
+
+            $ bitbake -c fetchall <target-image>
+
+==============================================================================
+ 3. What images are available from which to choose?
+
+    a) have a look at the manual:
+        http://www.yoctoproject.org/docs/current/poky-ref-manual/poky-ref-manual.html#ref-images
+
+    b) From within the poky Git repository, use the following command to list the
+       supported images:
+
+        $ ls */*/images/*bb
+
+       These recipes reside in the meta/recipes-core/images,
+       meta/recipes-extended/images, meta/recipes-graphics/images, and
+       meta/recipes-sato/images directories of your local Yocto Project
+       file structure (Git repository or extracted release tarball).
+
+==============================================================================
+ 2. General task list
+
+    do_fetch
+    do_unpack
+    do_patch
+    do_configure
+    do_compile
+    do_install
+    do_package
+
+==============================================================================
+ 1. How to obtain the list of tasks
+
+    $ bitbake -c listtasks <image>
+    Parsing recipes: 100%
+    |##################################################################|
+    Time: 00:00:15
+    Parsing of 828 .bb files complete (0 cached, 828 parsed). 1127
+    targets, 19 skipped, 0 masked, 0 errors.
+
+    Build Configuration:
+    BB_VERSION        = "1.15.3"
+    TARGET_ARCH       = "i586"
+    TARGET_OS         = "linux"
+    MACHINE           = "qemux86"
+    DISTRO            = "poky"
+    DISTRO_VERSION    = "1.2+snapshot-20120816"
+    TUNE_FEATURES     = "m32 i586"
+    TARGET_FPU        = ""
+    meta
+    meta-yocto        = "master:af847d36375aa53f0c1ee2a00c97ba9f38837d1b"
+
+    NOTE: Resolving any missing task queue dependencies
+    NOTE: Preparing runqueue
+    NOTE: Executing RunQueue Tasks
+    do_fetchall
+    do_build
+    do_devshell
+    do_cleansstate
+    do_rootfs
+    do_configure
+    do_cleanall
+    do_populate_lic
+    do_package_write
+    do_populate_sysroot
+    do_populate_sdk
+    do_package_write_rpm
+    do_unpack
+    do_patch
+    do_listtasks
+    do_compile
+    do_package_setscene
+    do_populate_lic_setscene
+    do_fetch
+    do_checkuri
+    do_clean
+    do_package_write_rpm_setscene
+    do_package
+    do_install
+    do_populate_sysroot_setscene
+    do_checkuriall
+    NOTE: Tasks Summary: Attempted 1 tasks of which 0 didn't need to be rerun and all succeeded.

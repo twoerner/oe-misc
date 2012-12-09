@@ -1,0 +1,116 @@
+building qemux86 -rt (i586)
+
+- edit local.conf and add:
+	PREFERRED_PROVIDER_virtual/kernel = "linux-yocto-rt"
+	IMAGE_INSTALL_append = " bash openssh openssh-ssh openssh-sshd util-linux"
+  NOTE: space after " before 'bash' is significant
+
+$ bitbake core-image-rt
+$ runqemu qemux86 tmp/deploy/images/core-image-rt-qemux86.ext3
+
+==============================================================================
+
+$ mkdir -p /home/trevor/devel/yocto/git-method
+$ cd /home/trevor/devel/yocto/git-method
+$ git clone git://git.yoctoproject.org/poky
+$ git clone --bare git://git.yoctoproject.org/linux-yocto-3.0 linux-yocto-3.0.git
+$ git clone linux-yocto-3.0.git linux-yocto-3.0
+
+$ cd poky
+$ git clone git://git.yoctoproject.org/poky-extras poky-extras
+$ git clone git://git.yoctoproject.org/meta-intel.git
+
+see http://www.openembedded.org/wiki/LayerIndex for more
+NOTE if you add meta-texasinstruments you'll probably have to add the following to conf/local.conf:
+	BBMASK = ".*/meta-ti/recipes-misc/"
+NOTE if you have added extra layers from the layer index you'll need to add them to conf/bblayers.conf
+     edit conf/bblayers.conf and add to the BBLAYERS variable:
+	/home/trevor/devel/yocto/git-method/poky/meta-gumstix \
+	/home/trevor/devel/yocto/git-method/poky/meta-texasinstruments \
+	/home/trevor/devel/yocto/git-method/poky/meta-xilinx \
+	...
+
+$ cd ..
+$ source poky/oe-init-build-env 
+You had no conf/local.conf file. This configuration file has therefore been
+created for you with some default values. You may wish to edit it to use a 
+different MACHINE (target hardware) or enable parallel build options to take 
+advantage of multiple cores for example. See the file for more information as 
+common configuration options are commented.
+
+The Yocto Project has extensive documentation about OE including a reference manual
+which can be found at:
+    http://yoctoproject.org/documentation
+
+For more information about OpenEmbedded see their website:
+    http://www.openembedded.org/
+
+You had no conf/bblayers.conf file. The configuration file has been created for
+you with some default values. To add additional metadata layers into your
+configuration please add entries to this file.
+
+The Yocto Project has extensive documentation about OE including a reference manual
+which can be found at:
+    http://yoctoproject.org/documentation
+
+For more information about OpenEmbedded see their website:
+    http://www.openembedded.org/
+
+
+
+### Shell environment set up for builds. ###
+
+You can now run 'bitbake <target>'
+
+Common targets are:
+    core-image-minimal
+    core-image-sato
+    meta-toolchain
+    meta-toolchain-sdk
+    adt-installer
+    meta-ide-support
+
+You can also run generated qemu images with a command like 'runqemu qemux86'
+
+(this creates and puts you into a directory named "build" by default, you can change the target dir)
+$ vi conf/local.conf
+	edit:
+		BB_NUMBER_THREADS
+		PARALLEL_MAKE
+		MACHINE
+		DL_DIR
+	add:
+		NO32LIBS = "1" (only necessary if glibc-devel-32 is installed on a 64-bit system)
+
+$ bitbake core-image-minimal
+
+==============================================================================
+http://www.crashcourse.ca/wiki/index.php/Yocto_FAQ
+
+ How can I ask bitbake to just fetch all the source I need if I want to build off-line later?
+ $ bitbake -c fetchall <target-image>
+
+==============================================================================
+What images are available from which to choose?
+
+ http://www.yoctoproject.org/docs/current/poky-ref-manual/poky-ref-manual.html#ref-images
+  From within the poky Git repository, use the following command to list the supported images:
+
+       $ ls meta*/recipes*/images/*.bb
+               
+
+  These recipes reside in the meta/recipes-core/images, meta/recipes-extended/images,
+  meta/recipes-graphics/images, and meta/recipes-sato/images directories of your local
+  Yocto Project file structure (Git repository or extracted release tarball).
+
+
+==============================================================================
+build steps:
+
+	do_fetch
+	do_unpack
+	do_patch
+	do_configure
+	do_compile
+	do_install
+	do_package

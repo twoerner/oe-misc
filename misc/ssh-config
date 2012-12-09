@@ -1,0 +1,13 @@
+When using 'runqemu' the IP address of the VM will always be the same, however
+each new build of the image will cause new server SSH keys to be generated.
+Between connecting to new images you will have to run something like:
+
+	$ ssh-keygen -R 192.168.7.2 -f /home/trevor/.ssh/known_hosts
+
+Or you could put something along the following into your ~/.ssh/config:
+
+	Host yimage
+		HostName 192.168.7.2
+		StrictHostKeyChecking no
+		UserKnownHostsFile /dev/null
+		User root

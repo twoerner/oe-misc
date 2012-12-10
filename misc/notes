@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4
 
 Index:
+    16. Notes on setting up an ssh server in an image
     15. Setting the size of an image
     14. Ignoring .bbappends with no .bb
     13. Ignoring certain configuration items
@@ -16,6 +17,51 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+==============================================================================
+16. Notes on setting up an ssh server in an image
+
+    If you decide you want to ssh to a _development_ image and are using
+    'runqemu', you'll notice the IP address of the image will always be the
+    same (192.168.7.2). However, each new build of the image will cause new
+    server SSH keys to be generated. This means that between 'runqemu' runs
+    you will have to run something like the following:
+
+        $ ssh-keygen -R 192.168.7.2 -f $HOME/.ssh/known_hosts
+
+    In order to clear out your local settings (which will cache the current
+    host keys and notice the change when your next image is generated). Since
+    you know these images are safe, put the following into your
+    $HOME/.ssh/config:
+
+        Host yimage
+            HostName 192.168.7.2
+            StrictHostKeyChecking no
+            UserKnownHostsFile /dev/null
+            User root
+
+    This way you only need to:
+
+        $ ssh yimage
+
+    to ssh into the running image, and you will not be required to run the
+    'ssh-keygen -R' line between connecting to new images.
+
+    In order to add an ssh server to your image, simply add the following to
+    your image (i.e. IMAGE_INSTALL):
+
+        openssh
+
+    You'll also notice that by default, the ssh server (running in your image)
+    does not allow blank password logins and does not allows logins to the root
+    user. This can be changed (and should only be done in _development_
+    images!!) by modifying EXTRA_IMAGE_FEATURES to include ssh-server-openssh.
+    For example:
+
+        EXTRA_IMAGE_FEATURES ?= "debug-tweaks ssh-server-openssh"
+
+    ('debug-tweaks' is the thing that sets up the blank root password for your
+    _development_ image (among other things) in the first place)
 
 ==============================================================================
 15. Setting the size of an image

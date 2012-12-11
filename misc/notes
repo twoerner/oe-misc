@@ -98,10 +98,6 @@ Index:
 
         IMAGE_ROOTFS_SIZE = "8192"
 
-    or to set it for a specific image (and not others) use:
-
-        IMAGE_ROOTFS_SIZE_vmdk = "512000"
-
     NOTE: that vmdk's grow dynamically, so although the final .vmdk won't
           be the size specified, it will be able to grow to that size when
           running. Other output image types (e.g. ext3) will be created of
@@ -112,8 +108,8 @@ Index:
 
     NOTE: the build system will set your image size to be the larger of its
           calculated size and the size you specify. Therefore if you set
-          IMAGE_ROOTFS_SIZE[_<image>] too small, the system will bump up
-          the output size silently.
+          IMAGE_ROOTFS_SIZE too small, the system will bump up the output
+          size silently.
 
 ==============================================================================
 14. Ignoring .bbappends with no .bb

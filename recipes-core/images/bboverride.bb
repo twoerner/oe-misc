@@ -10,9 +10,5 @@ LICENSE = "MIT"
 
 inherit core-image
 
-USER_CLASSES ?= "buildstats image-mklibs image-prelink"
-PATCHRESOLVE ?= "noop"
-PACKAGE_CLASSES ?= "package_ipk"
 IMAGE_ROOTFS_SIZE ?= "8192"
-EXTRA_IMAGE_FEATURES ?= "debug-tweaks ssh-server-openssh"
 ROOTFS_POSTPROCESS_COMMAND += "remove_packaging_data_files ; "

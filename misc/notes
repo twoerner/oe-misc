@@ -98,6 +98,8 @@ Index:
 
         IMAGE_ROOTFS_SIZE = "8192"
 
+    Another suggestion is to just set IMAGE_ROOTFS_EXTRA_SPACE (in kb).
+
     NOTE: vmdk's grow dynamically, so although the final .vmdk won't
           be the size specified, it will be able to grow to that size when
           running. Other output image types (e.g. ext3) will be created of

@@ -1,6 +1,11 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78
 
 Index:
+    19. SDK
+        19.a ADT
+        19.b populate_sdk
+        19.c native development
+        19.d manual Makefile
     18. Image package list
     17. Notes for imx53qsb
     16. Notes on setting up an ssh server in an image
@@ -19,6 +24,95 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+==============================================================================
+19. SDK
+
+    As far as I can tell, there are a couple ways to perform cross-development
+    relative to a bitbaked image:
+        - ADT
+        - bitbake -c populate_sdk <image>
+        - cross-build a native dev environment
+        - manual Makefile
+
+ 19.a) ADT
+
+    I don't know anything about this method. I think you use some ADT tool in
+    eclipse and it allows you to perform cross-development relative to some
+    build.
+
+ 19.b) bitbake -c populate_sdk <image>
+
+    When you have successfully completed your build, perform a:
+
+        $ bitbake -c populate_sdk <image>
+
+    then look in
+
+        tmp/deploy/sdk
+
+    and you'll find a self-extracting shell script which you can run anywhere
+    (it'll start by asking you where you want to extract your SDK, so the SDK
+    doesn't have to be setup in the location where you are presently located):
+
+        $ sh tmp/deploy/sdk/poky-eglibc-x86_64-i586-toolchain-1.3+snapshot-20130123.sh
+        Enter target directory for SDK (default: /opt/poky/1.3+snapshot): /install/path
+        You are about to install the SDK to "/home/trevor/tmp/sdk".  Proceed[Y/n]?Y
+        Extracting SDK...done
+        Setting it up...done
+        SDK has been successfully set up and is ready to be used.
+
+    To use the SDK you'll need to source its environment, e.g. (note:
+    /some/path is the location into which you asked the SDK to be installed):
+
+        $ source /some/path/environment-setup-i586-poky-linux
+
+ 19.c) cross-build a native development environment
+
+    You can create an image that includes all the development tools and
+    packages for development. If you run this image on the target device
+    and/or in a virtual instance you can use that setup for your development
+    work.
+
+    You have to create a separate image from your target image (assuming you
+    don't want to deploy an image with all the build/development tools). In
+    this -dev image, modify the configuration's EXTRA_IMAGE_FEATURES (or
+    perhaps just 'IMAGE_FEATURES += '?) to include some or all of the
+    following:
+
+        dbg-pkgs        add -dbg packages of everything
+        dev-pkgs        add -dev packages of everything
+        tools-sdk       add development tools (gcc, make, ...)
+        tools-debug     add debugging tools (gdb, strace, ...)
+        tools-profile   add profiling tools (oprofile, valgrind, ...)
+        tools-testapps  add useful testing apps
+
+    Some images already come with a -dev variation (for example
+    core-image-minimal and core-image-minimal-dev).
+
+    Note: meta/recipes-core/images/core-image-minimal-dev.bb just simply
+    includes:
+
+        require core-image-minimal.bb
+        DESCRIPTION = "..."
+        IMAGE_FEATURES += "dev-pkgs"
+
+ 19.d) manual Makefile
+
+    You can create a Makefile by hand for your project and include things such
+    as (this example is specific to gumstix development):
+
+        OETMP = /path/to/your/build/directory/tmp
+        TOOLDIR = $(OETMP)/sysroots/`uname -m`-linux/usr/bin
+        STAGEDIR = $(OETMP)/sysroots/<machine>/usr
+            [e.g. $(OETMP)/sysroots/overo/usr]
+        CC = $(TOOLDIR)/armv7ahf-vfp-neon-poky-linux-gnueabi/arm-poky-linux-gnueabi-gcc
+        CFLAGS = -O2 -Wall -mfloat-abi=hard -mfpu=vfp
+        LIBDIR = $(STAGEDIR)/lib
+        INCDIR = (STAGEDIR)/include
+
+        <target>: <dependencies>
+            $(CC) $(CFLAGS) -I $(INCDIR) -L $(LIBDIR) ...
 
 ==============================================================================
 18. Image package list

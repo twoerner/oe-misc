@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4
 
 Index:
+    17. Notes for imx53qsb
     16. Notes on setting up an ssh server in an image
     15. Setting the size of an image
     14. Ignoring .bbappends with no .bb
@@ -17,6 +18,14 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+==============================================================================
+17. Notes for imx53qsb
+
+    - include meta-fsl-arm layer
+    - set MACHINE to imx53qsb
+    - 'dd' sdcard image to a flash card:
+        # dd if=tmp/deploy/images/core-image-minimal-imx53qsb.sdcard of=/dev/sdd
 
 ==============================================================================
 16. Notes on setting up an ssh server in an image

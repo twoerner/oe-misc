@@ -1,6 +1,7 @@
-vim: expandtab ts=4 sts=4 sw=4
+vim: expandtab ts=4 sts=4 sw=4 textwidth=78
 
 Index:
+    18. Image package list
     17. Notes for imx53qsb
     16. Notes on setting up an ssh server in an image
     15. Setting the size of an image
@@ -18,6 +19,18 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+==============================================================================
+18. Image package list
+
+    To obtain the list of packages that are going to be included in a given
+    image use bitbake's '-g' option with the image name:
+
+        $ bitbake -g <image>
+
+    then
+
+        $ cat pn-buildlist | grep -v native | sort
 
 ==============================================================================
 17. Notes for imx53qsb

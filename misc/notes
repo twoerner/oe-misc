@@ -304,7 +304,8 @@ Index:
 ==============================================================================
  8. How to add packages to an image
 
-    edit local.conf and add:
+    Edit local.conf and add the packages to add. For example to add bash,
+    openssh, openss-ssh, openssh-sshd and util-linux:
 
         IMAGE_INSTALL_append = " bash openssh openssh-ssh openssh-sshd util-linux"
 

@@ -29,14 +29,14 @@ Index:
 ==============================================================================
 20. menuconfig
 
-    Currently there's a bug somewhere so that if I do a
+    If I do a
 
         $ bitbake <kernel> -c menuconfig
 
-    A window pops up and tries to present me with the kernel's menuconfig, but
-    unfortunately it's all garbled. Personally I would much prefer if the
-    menuconfig would just come up in the existing window in which I am
-    working. Thankfully OE already has this functionality, to get it add:
+    a window pops up and presents me with the kernel's menuconfig.
+    Personally I would much prefer if the menuconfig would just come
+    up in the existing window in which I am working. Thankfully OE
+    already has this functionality, to get it add:
 
         OE_TERMINAL = "screen"
 

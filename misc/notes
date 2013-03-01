@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78
 
 Index:
+    20. menuconfig
     19. SDK
         19.a ADT
         19.b populate_sdk
@@ -24,6 +25,22 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+==============================================================================
+20. menuconfig
+
+    Currently there's a bug somewhere so that if I do a
+
+        $ bitbake <kernel> -c menuconfig
+
+    A window pops up and tries to present me with the kernel's menuconfig, but
+    unfortunately it's all garbled. Personally I would much prefer if the
+    menuconfig would just come up in the existing window in which I am
+    working. Thankfully OE already has this functionality, to get it add:
+
+        OE_TERMINAL = "screen"
+
+    to conf/local.conf.
 
 ==============================================================================
 19. SDK

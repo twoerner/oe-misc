@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78
 
 Index:
+    21. Investigating variables
     20. menuconfig
     19. SDK
         19.a ADT
@@ -25,6 +26,45 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+
+==============================================================================
+21. Investigating variables
+
+    I often find myself wondering how a variable gets set, where it gets set,
+    and the value to which it gets set. Or perhaps I might even wonder what
+    variables are available.
+
+    For these (and other such) questions, use:
+
+        $ bitbake -e
+
+    Usually you'll want to know the information for a given target, in which
+    case you'd usually do:
+
+        $ bitbake -e <image target>
+
+    This generates a lot of data, so you'll probably want to pipe it through
+    "less" or otherwise redirect it in some way.
+
+    The output can be divided into roughly two sections: one section for
+    variables, and the second for functions. Fortunately the variables
+    come first. As one example, here is what this output gives for me for
+    the variable OE_TERMINAL (which is a variable I have tweaked in my own
+    conf/local.conf:
+
+        # $OE_TERMINAL [4 operations]
+        #   set /home/trevor/devel/yocto/gitrepo-method/fullbuild/conf/local.conf:28
+        #     "screen"
+        #   set? /home/trevor/devel/yocto/gitrepo-method/poky/meta/classes/terminal.bbclass:1
+        #     "auto"
+        #   set /home/trevor/devel/yocto/gitrepo-method/poky/meta/classes/terminal.bbclass:2
+        #     [type] "choice"
+        #   set /home/trevor/devel/yocto/gitrepo-method/poky/meta/classes/terminal.bbclass:5
+        #     [choices] "auto none ${@" ".join(o.name for o in oe.terminal.prioritized())}"
+        # computed:
+        #   "screen"
+        OE_TERMINAL="screen"
 
 ==============================================================================
 20. menuconfig

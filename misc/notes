@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78
 
 Index:
+    22. Cleaning up
     21. Investigating variables
     20. menuconfig
     19. SDK
@@ -27,6 +28,22 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+22. Cleaning up
+
+    There are various ways to "clean":
+
+        $ bitbake -c cleanall <recipe>
+            - cleans working directory
+            - cleans sstate
+            - cleans (removes?) downloaded files
+
+        $ bitbake -c cleansstate <recipe>
+            - cleans sstate
+
+        $ rm -fr <TMPDIR>
+            - removes output files
 
 ==============================================================================
 21. Investigating variables

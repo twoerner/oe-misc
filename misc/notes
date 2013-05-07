@@ -7,8 +7,9 @@ Index:
     19. SDK
         19.a ADT
         19.b populate_sdk
-        19.c native development
-        19.d manual Makefile
+        19.c meta-toolchain
+        19.d native development
+        19.e manual Makefile
     18. Image package list
     17. Notes for imx53qsb
     16. Notes on setting up an ssh server in an image
@@ -141,7 +142,33 @@ Index:
 
         $ source /some/path/environment-setup-i586-poky-linux
 
- 19.c) cross-build a native development environment
+ 19.c) meta-toolchain
+
+    There is a recipe called meta-toolchain which you can invoke to generate
+    an SDK:
+
+        $ bitbake meta-toolchain
+
+    This differs from "-c populate_sdk" in that the recipe dictates *exactly*
+    what will end up in the SDK, whereas "-c populate_sdk" determines what to
+    include in the SDK by looking at the specified <image>.
+
+    There are also a couple other such meta-toolchain* recipes (filtered):
+
+        $ find . -name "*meta-toolchain*" -print
+        ./meta-openembedded/meta-efl/recipes-core/meta/meta-toolchain-efl.bb
+        ./openembedded-core/meta/recipes-core/meta/meta-toolchain-gmae.bb
+        ./openembedded-core/meta/recipes-core/meta/meta-toolchain.bb
+        ./openembedded-core/meta/recipes-qt/meta/meta-toolchain-qt.bb
+        ./openembedded-core/meta/recipes-qt/meta/meta-toolchain-qte.bb
+        ./meta-poky/meta/recipes-core/meta/meta-toolchain-gmae.bb
+        ./meta-poky/meta/recipes-core/meta/meta-toolchain.bb
+        ./meta-poky/meta/recipes-qt/meta/meta-toolchain-qt.bb
+        ./meta-poky/meta/recipes-qt/meta/meta-toolchain-qte.bb
+
+    The result ends up in tmp/deploy/sdk.
+
+ 19.d) cross-build a native development environment
 
     You can create an image that includes all the development tools and
     packages for development. If you run this image on the target device
@@ -171,7 +198,7 @@ Index:
         DESCRIPTION = "..."
         IMAGE_FEATURES += "dev-pkgs"
 
- 19.d) manual Makefile
+ 19.e) manual Makefile
 
     You can create a Makefile by hand for your project and include things such
     as (this example is specific to gumstix development):

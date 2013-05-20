@@ -26,6 +26,13 @@ for GITDIR in `find . -name .git -print`; do
 			break
 		fi
 	done
+
+	DIRNAME=$(basename $(pwd))
+	if [ x"$DIRNAME" = x"meta-openembedded" -o x"$DIRNAME" = x"openembedded-core" ]; then
+		echo "fetching contrib"
+		git fetch contrib
+	fi
+
 	popd > /dev/null
 	echo ""
 done

@@ -230,10 +230,20 @@ Index:
 ==============================================================================
 17. Notes for imx53qsb
 
+    a) the older way
     - include meta-fsl-arm layer
     - set MACHINE to imx53qsb
     - 'dd' sdcard image to a flash card:
         # dd if=tmp/deploy/images/core-image-minimal-imx53qsb.sdcard of=/dev/sdd
+
+    b) a newer way using the fsl code at github
+        $ repo init \
+            -u https://github.com/Freescale/fsl-community-bsp-platform \
+            -b dylan
+        $ repo sync
+        $ source ./setup-environment <build directory name>
+        $ MACHINE="imx53qsb" bitbake fsl-image-gui
+            (use the same 'dd' command to create the sdcard)
 
 ==============================================================================
 16. Notes on setting up an ssh server in an image

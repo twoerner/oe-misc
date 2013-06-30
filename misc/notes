@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78
 
 Index:
+    23. bmaptool
     22. Cleaning up
     21. Investigating variables
     20. menuconfig
@@ -29,6 +30,51 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+23. bmaptool
+
+    bmaptool[1] is a utility which speeds up the creation of sdcard images.
+
+    Without using bmaptools:
+        $ time dd if=core-image-minimal-imx53qsb.sdcard of=/dev/sdf
+        26034176+0 records in
+        26034176+0 records out
+        13329498112 bytes (13 GB) copied, 5340.82 s, 2.5 MB/s
+
+        real    89m0.826s
+        user    0m20.977s
+        sys     3m51.128s
+
+    Note that most of the above is just useless copying of blank/empty
+    sectors.
+
+    To use bmaptools two steps are required:
+        1) create the map
+            $ bmaptool create -o <bmapfile> <image>
+        2) use the map to create the sdcard
+            $ bmaptool copy --bmap <bmapfile> <image> <device>
+
+
+    $ time bmaptool create -o sdcard.bmap core-image-minimal-imx53qsb.sdcard
+
+    real    1m32.797s
+    user    0m33.658s
+    sys     0m6.001s
+
+
+    $ time bmaptool copy \
+        --bmap sdcard.bmap \
+        core-image-minimal-imx53qsb.sdcard \
+        /dev/sdf
+
+    real    42m59.165s
+    user    0m39.362s
+    sys     0m22.307s
+
+
+
+    [1] https://source.tizen.org/documentation/articles/bmaptool
 
 ==============================================================================
 22. Cleaning up

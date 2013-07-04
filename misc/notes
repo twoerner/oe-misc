@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78
 
 Index:
+    24. Removing a package
     23. bmaptool
     22. Cleaning up
     21. Investigating variables
@@ -30,6 +31,13 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+24. Removing a package
+
+    Use the BAD_RECOMMENDATIONS variable to list any packages that must be
+    filtered out during image creation. NOTE: BAD_RECOMMENDATIONS only works
+    for ipk.
 
 ==============================================================================
 23. bmaptool

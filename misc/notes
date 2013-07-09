@@ -315,34 +315,28 @@ Index:
     you know these images are safe, put the following into your
     $HOME/.ssh/config:
 
-        Host yimage
-            HostName 192.168.7.2
+        Host 192.168.7.2
             StrictHostKeyChecking no
             UserKnownHostsFile /dev/null
             User root
 
     This way you only need to:
 
-        $ ssh yimage
+        $ ssh 192.168.7.2
 
     to ssh into the running image, and you will not be required to run the
     'ssh-keygen -R' line between connecting to new images.
 
-    In order to add an ssh server to your image, simply add the following to
-    your image (i.e. IMAGE_INSTALL):
-
-        openssh
-
-    You'll also notice that by default, the ssh server (running in your image)
-    does not allow blank password logins and does not allows logins to the root
-    user. This can be changed (and should only be done in _development_
-    images!!) by modifying EXTRA_IMAGE_FEATURES to include ssh-server-openssh.
-    For example:
+    In order to add an ssh server to your image, simply add the following
+    option to your configuration:
 
         EXTRA_IMAGE_FEATURES ?= "debug-tweaks ssh-server-openssh"
 
-    ('debug-tweaks' is the thing that sets up the blank root password for your
-    _development_ image (among other things) in the first place)
+    You probably already have the "debug-tweaks" option, so all you'll simply
+    need to do is add the "ssh-server-openssh" option. The combination of
+    these two things builds the ssh server into your image, runs it on
+    startup, and tweaks the ssh server configuration so that it allows
+    password-less root logins.
 
 ==============================================================================
 15. Setting the size of an image

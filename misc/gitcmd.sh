@@ -4,6 +4,7 @@ if [ -z "$1" ]; then
 	echo "required git command argument missing"
 	exit 1
 fi
+GITCMD="$1"
 
 FAILED=""
 
@@ -14,7 +15,7 @@ for GITDIR in `find . -name .git -print`; do
 	COUNT=0
 	while [ 1 ]; do
 		echo "attempt $COUNT"
-		git "$1"
+		git "$GITCMD"
 		if [ $? -ne 0 ]; then
 			COUNT=`expr $COUNT + 1`
 			if [ $COUNT -gt 10 ]; then
@@ -27,10 +28,12 @@ for GITDIR in `find . -name .git -print`; do
 		fi
 	done
 
-	DIRNAME=$(basename $(pwd))
-	if [ x"$DIRNAME" = x"meta-openembedded" -o x"$DIRNAME" = x"openembedded-core" -o x"$DIRNAME" = x"meta-poky" ]; then
-		echo "fetching contrib"
-		git fetch contrib
+	if [ x"$GITCMD" = x"pull" ]; then
+		DIRNAME=$(basename $(pwd))
+		if [ x"$DIRNAME" = x"meta-openembedded" -o x"$DIRNAME" = x"openembedded-core" -o x"$DIRNAME" = x"meta-poky" ]; then
+			echo "fetching contrib"
+			git fetch contrib
+		fi
 	fi
 
 	popd > /dev/null

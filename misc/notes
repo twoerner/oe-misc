@@ -64,6 +64,11 @@ Index:
     buildtools-tarball:
 
         $ source <DEST>/environment-setup-x86_64-pokysdk-linux
+    
+    If you don't trust your host system to correctly build the
+    buildtools-tarball, you can download a known working one from:
+
+        http://autobuilder.yoctoproject.org/pub/nightly/CURRENT/buildtools/
 
 ==============================================================================
 24. Removing a package

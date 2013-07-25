@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78
 
 Index:
+    25. Faulty host tools (buildtools-tarball)
     24. Removing a package
     23. bmaptool
     22. Cleaning up
@@ -31,6 +32,38 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+25. Faulty host tools (buildtools-tarball)
+
+    make-3.82 is known to have issues. The build system now contains a sanity
+    test to check not only your version of make, but can differentiate between
+    make's which have been patched by your distro to avoid the known issue(s).
+
+    If your distro fails this sanity test you can attempt to generate the
+    buildtools-tarball which you can then use exactly as you would an SDK.
+
+        $ bitbake buildtools-tarball
+
+    You'll then find the result in ${TMPDIR}/deploy/sdk
+
+        poky-eglibc-x86_64-i586-buildtools-nativesdk-standalone-1.4+snapshot-20130724.sh
+
+    Simply run this self-extracting shell script and choose an install
+    location:
+
+        $ ./poky-eglibc-x86_64-i586-buildtools-nativesdk-standalone-1.4+snapshot-20130724.sh 
+        Enter target directory for SDK (default: /opt/poky/1.4+snapshot): <enter DEST dir here>
+        You are about to install the SDK to "<DEST>". Proceed[Y/n]?
+        Extracting SDK...done
+        Setting it up...done
+        SDK has been successfully set up and is ready to be used.
+
+    Just like when using an SDK, in the <DEST> directory you'll find an
+    environment file which you can "source" to begin using the tools from the
+    buildtools-tarball:
+
+        $ source <DEST>/environment-setup-x86_64-pokysdk-linux
 
 ==============================================================================
 24. Removing a package

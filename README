@@ -18,3 +18,41 @@ revision:	HEAD
 This layer is maintained by:
 
 	Trevor Woerner <twoerner@gmail.com>
+
+
+QT5 Application Demo
+^^^^^^^^^^^^^^^^^^^^
+In this layer I have also provided a sample recipe for building a (copied)
+sample qt5 application.
+
+I say "copied" because I want to make clear that this is something that
+is provided as one of the sample qt5 applications and isn't something I
+personally wrote from scratch. The (copied) sample qt5 application comes
+from the qt5 help documentation and is named "textfinder". The recipe builds
+the code by finding it on my github account here:
+	https://github.com/twoerner/textfinder
+You can find more information about this sample qt5 application here:
+	http://qt-project.org/doc/qt-5.0/qtuitools/textfinder.html
+
+I have, by necessity, provided two branches of this meta-trevor layer: one for
+the master branch and one for dylan. If you want to try building this layer's
+master textfinder application you need to make sure all the other layers are
+also on their master branches. The same holds true for this layer's dylan
+branch.
+
+To experiment with building textfinder you'll need the following layers (in
+addition to this one):
+	meta-poky/meta
+	meta-poky/meta-yocto
+	meta-poky/meta-yocto-bsp
+	meta-openembedded/meta-ruby
+	meta-qt5
+
+Then, in your conf/local.conf, add:
+	IMAGE_INSTALL_append = " textfinder"
+
+Then run:
+	$ bitbake core-image-x11
+
+Once your image is running, simply call the following to run the application:
+	# textfinder

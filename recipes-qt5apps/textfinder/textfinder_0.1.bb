@@ -5,6 +5,7 @@ LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=376e6986d1fb1aa798d1389c3ed19c35"
 SECTION = "qt5app"
 DEPENDS = "qtbase"
+RDEPENDS_${PN} = "qtbase-plugins"
 
 S = "${WORKDIR}/git"
 SRCREV = "${AUTOREV}"

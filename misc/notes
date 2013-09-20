@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78
 
 Index:
+    26. devshell environment
     25. Faulty host tools (buildtools-tarball)
     24. Removing a package
     23. bmaptool
@@ -32,6 +33,45 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+26. devshell environment
+
+    Trying to use the devshell feature had been giving me problems.
+
+    To start, my default prompt strings were making use of some functions that
+    I define in my ~/.bashrc; unfortunately these functions were not being
+    copied into the devshell environment so my prompts were causing errors to
+    be printed to the terminal.
+
+    Secondly, I had setup a number of environment variables in such a way
+    as to not expect any help from the "outside". For example my PATH
+    export didn't bother to include $PATH in its definition because I know
+    all the places I want my shell to look and don't need to add to an
+    existing definition. The same was true for a number of other (ironically)
+    build-related environment variables such as LD_LIBRARY_PATH, CPATH,
+    PKG_CONFIG_PATH... As you can guess, this doesn't play well with devshell
+    since the way it works is to set, for example, PATH and then load the
+    user's settings. Since my settings weren't incorporating any existing
+    PATH, all I'd get was whatever I had set in my ~/.bashrc.
+
+    To get around this problem I made use of the "custom" OE_TERMINAL type and
+    a specific bashrc file created specifically for devshell usage.
+
+    First, take your existing ~/.bashrc and copy it to ~/.bashrc.oe. Edit
+    ~/.bashrc.oe and remove anything that relies on defined functions or that
+    sets a variable without incorporating its current definition.
+
+    Second, create a script somewhere on your PATH containing:
+
+        /bin/bash --rcfile /path/to/your/home/.bashrc.oe
+
+    and make it executable.
+
+    Finally in your conf/local.conf add the following lines:
+
+        OE_TERMINAL = "custom"
+        OE_TERMINAL_CUSTOMCMD = "/usr/bin/xterm -e /path/to/the/above/script"
 
 ==============================================================================
 25. Faulty host tools (buildtools-tarball)

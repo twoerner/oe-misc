@@ -1,6 +1,8 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    27. Using the package feed from a build machine on a target device
+        27.a ipk/opkg
     26. devshell environment
     25. Faulty host tools (buildtools-tarball)
     24. Removing a package
@@ -33,6 +35,96 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+27. Using the package feed from a build machine on a target device
+
+    In order to use package management on your device, you need a way to serve
+    up the package set which is built on the build machine. Typically this is
+    done via HTTP. A simple and easy-to-use HTTP server is "lighttpd".
+
+    One of the key things to know is that, on the build machine, you must run:
+
+        $ bitbake package-index
+
+    after any change that might affect packaging or after any rebuild. NOTE
+    that the following invocation:
+
+        $ bitbake <some package> package-index
+
+    doesn't work since "package-index" must run at the very end, and the
+    dependencies aren't in place to enforce this. Therefore it is safest to
+    just simply invoke "bitbake package-index" by itself at the end of any
+    build.
+
+ 27.a) ipk/opkg
+
+    Build Machine Setup
+
+        Regardless of which HTTP server you use, you'll need to figure out the
+        location from which it serves its files. This is usually described in
+        its configuration files as the "document root". Once you know this
+        location you'll probably want to create a symbolic link from your
+        $TMPDIR/deploy/ipk to the server's document root:
+
+            # ln -s ${PWD}/tmp/deploy/ipk /srv/www/htdocs/MYBOARD-files
+
+        In your target's configuration you'll also need to add "opkg" to its
+        image. For example, in conf/local.conf you could add:
+
+            IMAGE_INSTALL_append = " opkg"
+
+        NOTE that it is not necessary to add "package-management" to
+        EXTRA_IMAGE_FEATURES unless you want your board to start off with the
+        base package information that would be known at the end of the build.
+        If this is the case then you don't need to explicitly add "opkg" to
+        the image since this will be done by default by EXTRA_IMAGE_FEATURES.
+
+        As noted below (in the "Target Machine Usage" section), you'll need
+        to provide *.conf files on your target device in order to find
+        the package feeds. To make the process of creating the on-target
+        configuration files easier, meta-oe provides a recipe named
+        "distro-feed-configs" which you can include in your image which will
+        generate the /etc/opkg *.conf files and include them in your image.
+
+        In order to use this facility you'll need to do the following in your
+        conf/local.conf:
+
+            - add "distro-feed-configs" to your image:
+
+                IMAGE_INSTALL_append = " distro-feed-configs"
+
+            - provide a base url for fetching:
+
+                DISTRO_FEED_URI = "http://192.168.7.1/MYBOARD-files"
+
+    Target Machine Usage
+
+        On the target machine you need to have the "opkg" utility installed
+        (which is done during the build either by including
+        "package-management" in EXTRA_IMAGE_FEATURES or by adding the "opkg"
+        recipe to the image).
+
+        Next you need to have *.conf files in /etc/opkg which describe how and
+        from where to fetch the various package feeds. For example you might
+        create an "/etc/opkg/base-feeds.conf" file that looks like:
+
+            src/gz remote-all http://mymachine.com/MYBOARD-files/all
+            src/gz remote-armv7 http://mymachine.com/MYBOARD-files/armv7
+            src/gz remote-qemuarm http://mymachine.com/MYBOARD-files/qemuarm
+
+        However, if you included the "distro-feed-configs" package as part of
+        your image, these configuration files will already be included in your
+        image and you won't have to create this file yourself.
+
+        To refresh/update the ipk package management database on the target
+        simply run:
+
+            # opkg update
+
+        This will pull and update the database entries. Now you are ready to
+        install, remove, etc. any packages from the remote machine which is
+        serving up the packages.
 
 ==============================================================================
 26. devshell environment

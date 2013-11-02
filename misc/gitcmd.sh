@@ -33,6 +33,10 @@ for GITDIR in `find . -name .git -print`; do
 		if [ x"$DIRNAME" = x"meta-openembedded" -o x"$DIRNAME" = x"openembedded-core" -o x"$DIRNAME" = x"meta-poky" ]; then
 			echo "fetching contrib"
 			git fetch contrib
+
+			# cleanup stale branches
+			echo "pruning contrib branches"
+			git remote prune contrib
 		fi
 	fi
 

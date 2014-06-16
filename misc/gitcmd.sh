@@ -8,7 +8,7 @@ GITCMD="$1"
 
 FAILED=""
 
-for GITDIR in `find . -name .git -print`; do
+for GITDIR in `find . -name .git -print | sort`; do
 	DIR=`dirname $GITDIR`
 	echo "working in $DIR"
 	pushd $DIR > /dev/null

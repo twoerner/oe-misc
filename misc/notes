@@ -1,6 +1,12 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    33. Building/using an initramfs
+    32. Debugging app on target with gdb on dev host
+    31. Working with sstate stamps
+    30. Autotools build where $B != $S
+    29. Invoking the host's compiler while cross-compiling
+    28. Disabling parallel build
     27. Using the package feed from a build machine on a target device
         27.a ipk/opkg
     26. devshell environment
@@ -35,6 +41,211 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+33. Building/using an initramfs
+
+    OE has:
+
+        COMPATIBLE_HOST = "(i.86|x86_64).*-linux
+
+    as part of core-image-minimal-initramfs so it will only work if the target
+    is x86-based. However, initramfs'es can still be used for other
+    architectures. Simply add "cpio" to IMAGE_FSTYPES and use the resulting
+    cpio archive as the initrd. The above only means this specific image
+    (core-image-minimal-initramfs) was meant only to run on x86-based targets,
+    not that other targets can't have initramfs'es.
+
+    Khem also points out you can make any image become an initramfs image by
+    adding:
+
+        INITRAMFS_IMAGE = "your-initramfs-image"
+        INITRAMFS_IMAGE_BUNDLE = "1"
+
+    Adam initially ended up with an initramfs cpio image of 69MB in size!
+    However he then noticed he had some unnecessary DISTRO_FEATURES enabled;
+    once they were disabled the image shrunk to 2.5MB.
+
+==============================================================================
+32. Debugging app on target with gdb on dev host
+
+    (email on oedev mailing list, info from Mats Karrman)
+
+    "
+    Prerequisites:
+    - a network connection between your target and your development host (it's
+      possible to use a tty too).
+    - OE built SDK installed on your host.
+    - gdbserver package installed on your target.
+    - your binary (my-program) on target
+    - an unstripped version of your binary in the working directory on host.
+
+    The exact commands below will vary with the install path of your SDK
+    (/usr/local/oecore-x86_64 in my case) and target specifics (e.g. powerpc,
+    ppce300c3... in my case).
+
+    On target:
+    # gdbserver :2345 my-program
+
+    On host:
+    $ source /usr/local/oecore-x86_64/environment-setup-ppce300c3-oe-linux
+    $ powerpc-oe-linux-gdb my-program
+    (gdb) set sysroot /usr/local/oecore-x86_64/sysroots/ppce300c3-oe-linux
+    (gdb) target remote <target-ip>:2345
+    (gdb) br main
+    (gdb) cont
+    ...
+    "
+==============================================================================
+31. Working with sstate stamps
+
+    Mike Looijmans asked a question on the mailing list about sstate.
+    Specifically he wants to share sstate across two (or more) build machines.
+    The second build on another machine, however, insists on rebuilding even
+    though it shouldn't. Richard Purdie provides tonnes of useful information:
+
+    "
+    Let me explain the manual process you can follow for this. Its a pain to
+    walk through and its what -S attempts to automate but you should be able
+    to get an answer manually this way.
+
+    You have BUILDA and BUILDB, the two builds which should be reusing
+    sstate but are not. The fact they're on different machines is irrelevant
+    to this procedure. It would help if these two builds are just the result
+    of "bitbake fpga-image-miami" but that isn't essential, it will just
+    introduce more noise. It will also help if they are either both built
+    from an existing sstate cache or both not.
+
+    The first thing I'd do in each build:
+
+        $ find tmp/stamps/ -type f | sort > stamplistA.txt
+
+    I'd then so something like:
+
+        $ meld stamplistA stamplistB
+
+    the next steps depend upon how clear the differences are. Basically
+    there should be some degree of commonality between the two builds and at
+    some point there will be divergence. We need to pinpoint the point of
+    divergence. The divergence will be in fpga-image-miami itself or in one
+    of its dependencies.
+
+    The one thing which can confuse this view is if some things were reused
+    from sstate. You can tell since a task which runs looks like:
+
+        tmp/stamps/i586-poky-linux/x11-common/0.1-r47.do_populate_sysroot.d90d4404368125acd109a2ac64ca688f.qemux86
+
+    and a task which is from sstate looks like:
+
+        tmp/stamps/all-poky-linux/gstreamer1.0-meta-base/1.0-r0.do_populate_sysroot_setscene.a49fa811727c557c14ab6ce6f2973587.qemux86
+
+    The "_setscene" part tells you this. Machine specific tasks have the
+    machine name appended to them ".qemux86" in this case. The hash
+    representing the task is clear in the filename
+    ("a49fa811727c557c14ab6ce6f2973587" in this case").
+
+    You'll have to filter out any "noise" from these changes you're not
+    interested in. If a task is "_setscene" its dependencies may be missing
+    from the list of files entirely (no install/compile/configure etc.).
+
+    So you take a guess at the divergence point and take note of the two
+    different hashes. You can then find the corresponding siginfo files in
+    sstate:
+
+        $ find sstate-cache/ -name *d90d4404368125acd109a2ac64ca688f*
+        sstate-cache/d9/sstate:x11-common:i586-poky-linux:0.1:r47:i586:3:d90d4404368125acd109a2ac64ca688f_populate_sysroot.tgz
+        sstate-cache/d9/sstate:x11-common:i586-poky-linux:0.1:r47:i586:3:d90d4404368125acd109a2ac64ca688f_populate_sysroot.tgz.siginfo
+
+    which are the sstate files corresponding to my above x11-common task.
+    You will note that the first two letters of the hash are used as a
+    directory prefix. You can also find sigdata files in the stamp
+    directory:
+
+        $ find tmp/stamps/ -type f | grep d90d440
+        tmp/stamps/i586-poky-linux/x11-common/0.1-r47.do_populate_sysroot.d90d4404368125acd109a2ac64ca688f.qemux86
+        tmp/stamps/i586-poky-linux/x11-common/0.1-r47.do_populate_sysroot.sigdata.d90d4404368125acd109a2ac64ca688f
+
+    The sigdata and siginfo files are identical and equivalent. Once you
+    have the two sstate files, you can run:
+
+        $ bitbake-diffsigs A.siginfo B.siginfo
+
+    and this will tell you why their hashes are different. If you need help
+    deciphering that output, link to it and I can help.
+
+    If you didn't guess the divergence point correctly, it will tell you
+    that some prior task is actually different. In that case you would then
+    go and fetch the siginfo tasks for the previous task and compare those.
+    Either you find the difference or again, you have to trace it further
+    back.
+    "
+
+    Mike replies (in part) with:
+
+    "
+    So far, on one project (that is, NOT the fpga-image-miami) the
+    SRC_URI is slightly different. The machines are on various sides of
+    a router/firewall, so SRC_URI="git://${MY_SERVER}/blabla" evaluates
+    differently.
+
+    How can I tell the system that the value of "MY_SERVER" is irrelevant to
+    each and every build step in each and every recipe?
+    "
+
+    To which Richard replies:
+
+    "
+    The SRC_URI changing would indeed cause the tasks build separately since
+    bitbake thinks they're different things.
+
+    You have two ways of addressing this. Firstly, you could setup PREMIRROR
+    entries for these git urls which remaps them to the correct thing in
+    each case. There would then be one "canonical" url in the recipe and
+    you'd not need to change the hash generation.
+
+    The other way would be to either exclude the variable from the checksum
+    generation or give it a specific value. This would be something like:
+
+        do_fetch[vardepsexclude] += "SRC_URI"
+
+    you may also have to do this with other tasks that use SRC_URI such as
+    do_unpack and do_patch.
+
+    The other option is:
+
+        SRC_URI[vardepvalue] = "git://canonical/url/for/recipe"
+
+    which gives it a specific value to use for checksum purposes.
+    "
+
+==============================================================================
+30. Autotools build where $B != $S
+
+    Replace
+
+        inherit autotools
+
+    with
+
+        inherit autotools-brokensep
+
+==============================================================================
+29. Invoking the host's compiler while cross-compiling
+
+    Search for/investigate: BUILD_CC
+
+==============================================================================
+28. Disabling parallel build
+
+    Sometimes a package builds perfectly fine using a parallel build (i.e. for
+    values of N in 'make -jN' greater than 1). But other times (usually due to
+    a badly constructed Makefile, such as when dependencies are not fully or
+    properly described) a build must be forced to build "serially" in order to
+    succeed.
+
+    In these cases, add the following to the recipe:
+
+        PARALLEL_MAKE = ""
 
 ==============================================================================
 27. Using the package feed from a build machine on a target device

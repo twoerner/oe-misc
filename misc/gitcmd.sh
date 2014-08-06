@@ -10,6 +10,14 @@ FAILED=""
 
 for GITDIR in `find . -name .git -print | sort`; do
 	DIR=`dirname $GITDIR`
+
+	# check this isn't a build directory
+	echo $DIR | grep "build/tmp" > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		echo "skipping build dir: $DIR"
+		continue
+	fi
+
 	echo "working in $DIR"
 	pushd $DIR > /dev/null
 	COUNT=0

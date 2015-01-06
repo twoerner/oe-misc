@@ -54,4 +54,12 @@ done
 
 if [ -n "$FAILED" ]; then
 	echo "FAILED: $FAILED"
+
+	# check for (frequently failing) webos-ports (due to upstream rebasing)
+	echo $FAILED | grep meta-webos-ports > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		echo "deleting and re-cloning meta-webos-ports"
+		rm -fr meta-webos-ports
+		git clone git://github.com/webOS-ports/meta-webos-ports.git
+	fi
 fi

@@ -8,7 +8,7 @@ GITCMD="$1"
 
 FAILED=""
 
-for GITDIR in `find . -name .git -print | sort`; do
+for GITDIR in `find . -maxdepth 2 -name .git -print | sort`; do
 	DIR=`dirname $GITDIR`
 
 	# check this isn't a build directory

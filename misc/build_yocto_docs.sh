@@ -1,14 +1,24 @@
 #!/bin/bash
-# adt-manual bsp-guide dev-manual kernel-dev mega-manual profile-manual ref-manual
 
-pushd yocto-docs/documentation
-	for DOC in adt-manual bsp-guide dev-manual kernel-dev profile-manual ref-manual; do
+YOCTODOCS="adt-manual bsp-guide dev-manual kernel-dev profile-manual ref-manual"
+
+echo "yocto docs"
+pushd yocto-docs/documentation > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+	echo "can't find yocto docs"
+else
+	for DOC in $YOCTODOCS; do
 		make pdf DOC=$DOC
 	done
-popd
+	popd > /dev/null 2>&1
+fi
 
-pushd bitbake/doc
-	for DOC in bitbake-user-manual; do
-		make pdf DOC=$DOC
-	done
-popd
+echo ""
+echo "bitbake doc"
+pushd bitbake/doc > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+	echo "can't find bitbake docs"
+else
+	make pdf DOC=bitbake-user-manual
+	popd > /dev/null 2>&1
+fi

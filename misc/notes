@@ -108,6 +108,12 @@ Index:
         FILES_SOLIBSDEV = ""
         FILES_${PN} += "${libdir}/*.so"
 
+        - or -
+
+        FILES+SOLIBSDEV = ""
+        SOLIBS = ".so"
+        INSANE_SKIP_${PN} += "dev-so"
+
 ==============================================================================
 33. Building/using an initramfs
 

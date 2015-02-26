@@ -52,14 +52,15 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | sort`; do
 	echo ""
 done
 
-if [ -n "$FAILED" ]; then
+if [ -n "$FAILED" -a "$GITCMD" = "pull" ]; then
 	echo "FAILED: $FAILED"
 
-	# check for (frequently failing) webos-ports (due to upstream rebasing)
-	echo $FAILED | grep meta-webos-ports > /dev/null 2>&1
-	if [ $? -eq 0 ]; then
-		echo "deleting and re-cloning meta-webos-ports"
-		rm -fr meta-webos-ports
-		git clone git://github.com/webOS-ports/meta-webos-ports.git
-	fi
+	for REP in $FAILED; do
+		echo "deleting and re-cloning fail repository $REP"
+		pushd $REP
+			REMOTE=$(git remote -v | grep fetch | head -1 | cut -f2 | cut -d' ' -f1)
+		popd
+		rm -fr $REP
+		git clone $REMOTE
+	done
 fi

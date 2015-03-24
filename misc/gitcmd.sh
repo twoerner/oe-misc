@@ -39,12 +39,15 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | sort`; do
 	if [ x"$GITCMD" = x"pull" ]; then
 		DIRNAME=$(basename $(pwd))
 		if [ x"$DIRNAME" = x"meta-openembedded" -o x"$DIRNAME" = x"openembedded-core" -o x"$DIRNAME" = x"meta-poky" ]; then
-			echo "fetching contrib"
-			git fetch contrib
+			git remote -v | grep contrib > /dev/null 2>&1
+			if [ $? -eq 0 ]; then
+				echo "fetching contrib"
+				git fetch contrib
 
-			# cleanup stale branches
-			echo "pruning contrib branches"
-			git remote prune contrib
+				# cleanup stale branches
+				echo "pruning contrib branches"
+				git remote prune contrib
+			fi
 		fi
 	fi
 

@@ -59,11 +59,16 @@ if [ -n "$FAILED" -a "$GITCMD" = "pull" ]; then
 	echo "FAILED: $FAILED"
 
 	for REP in $FAILED; do
-		echo "deleting and re-cloning fail repository $REP"
+		echo "re-cloning failed repository $REP"
 		pushd $REP
 			REMOTE=$(git remote -v | grep fetch | head -1 | cut -f2 | cut -d' ' -f1)
 		popd
-		rm -fr $REP
-		git clone $REMOTE
+		git clone $REMOTE ${REP}.new
+		if [ $? -eq 0 ]; then
+			rm -fr $REP
+			mv ${REP}.new $REP
+		else
+			echo "clone failure on $REP"
+		fi
 	done
 fi

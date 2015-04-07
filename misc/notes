@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    37. Scheduling inter-recipe tasks
     36. Post-process
     35. Tasks
     34. Bad shared libraries
@@ -44,6 +45,21 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+37. Scheduling inter-recipe tasks
+
+    https://www.mail-archive.com/openembedded-devel@lists.openembedded.org/msg41478.html
+
+    Q. Is it possible to mark two or more tasks to run exclusive?
+       IOW, is it possible to schedule a task in one recipe relative to a task
+       in another recipe?
+
+    A. e.g.
+
+        do_fetch[depends] += "xxx:do_fetch"
+
+        Put this in the bb/bbappend of one recipe, "xxx" is the other recipe.
 
 ==============================================================================
 36. Post-process

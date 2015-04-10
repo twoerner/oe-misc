@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    39. Add a full python to the SDK
     38. Adding (and using) the linaro toolchain
     37. Scheduling inter-recipe tasks
     36. Post-process
@@ -46,6 +47,16 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+39. Add a full python to the SDK
+
+    The python that gets added to the SDK is rather minimal, to add a "full"
+    python to your "-c populate_sdk" add the following to your config:
+
+        TOOLCHAIN_HOST_TASK_append = " nativesdk-python-modules"
+
+    see: https://lists.yoctoproject.org/pipermail/yocto/2015-April/024446.html
 
 ==============================================================================
 38. Adding (and using) the linaro toolchain

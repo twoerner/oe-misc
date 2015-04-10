@@ -338,6 +338,13 @@ Index:
     which gives it a specific value to use for checksum purposes.
     "
 
+
+    Chris Larson (in a completely unrelated thread) also points out:
+
+        "bitbake -S printdiff <target>" will tell you why the sstate wasn't
+        used (where <target> is: a specific recipe, your image, whatever). You
+        might need https://gist.github.com/kergoth/3713d779c14dc8b98f36
+
 ==============================================================================
 30. Autotools build where $B != $S
 

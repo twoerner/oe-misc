@@ -345,6 +345,9 @@ Index:
         used (where <target> is: a specific recipe, your image, whatever). You
         might need https://gist.github.com/kergoth/3713d779c14dc8b98f36
 
+    Martin Jansa says:
+        try "openembedded-core/scripts/sstate-diff-machines.sh" to see why
+
 ==============================================================================
 30. Autotools build where $B != $S
 

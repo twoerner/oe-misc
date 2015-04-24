@@ -1,2 +1,0 @@
-$ bitbake core-image-rt
-$ runqemu qemux86 tmp/deploy/images/core-image-rt-qemux86.ext3

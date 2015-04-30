@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    40. Pretty buildstats charts
     39. Add a full python to the SDK
     38. Adding (and using) the linaro toolchain
     37. Scheduling inter-recipe tasks
@@ -47,6 +48,35 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+40. Pretty buildstats charts
+
+    A while back (2011) Richard Purdie added the functionality to display
+    detailed, graphical profiles of a build, heavily borrowed from the Linux
+    kernel's "pybootchartgui" functionality.
+
+    To get your build to generate the needed data, make sure "buildstats" is
+    included in USER_CLASSES.
+
+    Once your build completes, run:
+
+        $ path/to/meta-poky/scripts/pybootchartgui/pybootchartgui.py $TMPDIR/buildstats/<image>-<$MACHINE>
+
+    e.g.
+
+        $ ~/devel/yocto/releases/master/layers/meta-poky/scripts/pybootchartgui/pybootchartgui.py tmp/buildstats/core-image-full-cmdline-beaglebone
+
+    Some suggested cmdline options to pybootchartgui.py are:
+
+        $ <command> <image arg> \
+                -f svg \
+                -s 5 \
+                -o /tmp
+
+        -f <FORMAT>     specify a FORMAT, one of svg, pdf, png (default)
+        -s <NUM>        split the output into <NUM> files
+        -o <DIR>        place the output into file(s) at <DIR>
 
 ==============================================================================
 39. Add a full python to the SDK

@@ -443,7 +443,7 @@ Index:
         In your target's configuration you'll also need to add "opkg" to its
         image. For example, in conf/local.conf you could add:
 
-            IMAGE_INSTALL_append = " opkg"
+            CORE_IMAGE_EXTRA_INSTALL += "opkg"
 
         NOTE that it is not necessary to add "package-management" to
         EXTRA_IMAGE_FEATURES unless you want your board to start off with the
@@ -463,7 +463,7 @@ Index:
 
             - add "distro-feed-configs" to your image:
 
-                IMAGE_INSTALL_append = " distro-feed-configs"
+                CORE_IMAGE_EXTRA_INSTALL += "distro-feed-configs"
 
             - provide a base url for fetching:
 
@@ -1007,9 +1007,7 @@ Index:
     Edit local.conf and add the packages to add. For example to add bash,
     openssh, openss-ssh, openssh-sshd and util-linux:
 
-        IMAGE_INSTALL_append = " bash openssh openssh-ssh openssh-sshd util-linux"
-
-    NOTE: the space after the double-quote (i.e. before 'bash') is significant
+        CORE_IMAGE_EXTRA_INSTALL += "bash openssh openssh-ssh openssh-sshd util-linux"
 
     It is important to know that in Yocto/OpenEmbedded terminology we are given
     'recipes' and these 'recipes' generate 'packages'. Packages are files which
@@ -1024,8 +1022,8 @@ Index:
     generate multiple 'packages'; you then select only the packages you want
     included in your image.
 
-    Notice that the things you specify in "IMAGE_INSTALL"
-    (i.e. IMAGE_INSTALL_append) are _packages_ and not _recipes_.
+    Notice that the things you specify in "CORE_IMAGE_EXTRA_INSTALL" are
+    _packages_ and not _recipes_.
 
     To figure out which packages are created by a specific recipe:
 
@@ -1059,6 +1057,22 @@ Index:
     or
 
         $ bitbake-layers show-recipes
+
+
+    Can't I just use:
+
+        IMAGE_INSTALL_append = " bash"
+
+    instead of:
+
+        CORE_IMAGE_EXTRA_INSTALL += "bash"
+
+    ? Well, yes. But the whole "don't forget the space" and "make sure you use
+    '_append = " <package>"' and not '+= "<package"' (or any other variation)
+    was getting confusing and people are constantly making mistakes with it.
+    So the prevailing attitude is that the safest thing to advise people is to
+    use this new variable instead of appending to an already-defined variable.
+
 
 ==============================================================================
  7. How to build an image with an -rt kernel

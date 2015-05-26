@@ -1083,8 +1083,22 @@ Index:
 
         PREFERRED_PROVIDER_virtual/kernel = "linux-yocto-rt"
 
+    Sometimes the above will just cause bitbake to complain that your MACHINE
+    isn't in the COMPATIBLE list (or something like that), in which case you
+    also need to add:
+
+        COMPATIBLE_MACHINE_<machine> = "<machine>"
+
+    e.g.
+
+        COMPATIBLE_MACHINE_beaglebone = "beaglebone"
+
     $ bitbake core-image-rt
     $ runqemu qemux86 tmp/deploy/images/core-image-rt-qemux86.ext3
+
+    NOTE: that it is not necessary to use the "core-image-rt" target in order
+    to build a kernel with -rt if you've already configured your build to use
+    an -rt kernel. This target simply adds more "-rt" things in the image.
 
 ==============================================================================
  6. Special notes for various layers

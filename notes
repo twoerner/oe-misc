@@ -693,7 +693,13 @@ Index:
 
         OE_TERMINAL = "screen"
 
-    to conf/local.conf.
+    to conf/local.conf. [see item #26 too]
+
+    The Yocto documentation recommends doing a:
+
+        $ bitbake <kernel> -c kernel_configme -f
+
+    prior to the "-c menuconfig".
 
 ==============================================================================
 19. SDK

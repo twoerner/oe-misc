@@ -378,6 +378,9 @@ Index:
     Martin Jansa says:
         try "openembedded-core/scripts/sstate-diff-machines.sh" to see why
 
+    Also:
+        $ bitbake-whatchanged -v <your image>
+
 ==============================================================================
 30. Autotools build where $B != $S
 

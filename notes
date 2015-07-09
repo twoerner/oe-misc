@@ -1082,6 +1082,10 @@ Index:
     So the prevailing attitude is that the safest thing to advise people is to
     use this new variable instead of appending to an already-defined variable.
 
+    To add the kernel modules to an image:
+
+        CORE_IMAGE_EXTRA_INSTALL += "kernel-modules"
+
 
 ==============================================================================
  7. How to build an image with an -rt kernel

@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    41. Inter-task/recipe locks (e.g. restricting the number of fetches)
     40. Pretty buildstats charts
     39. Add a full python to the SDK
     38. Adding (and using) the linaro toolchain
@@ -47,6 +48,22 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+
+==============================================================================
+41. Inter-task/recipe locks (e.g. restricting the number of fetches)
+
+    Apparently it's possible to set a lock such that any task that uses the
+    same lock will have to wait for it to be available(!). This allows a user,
+    for example, to setup a lock for all fetch tasks so that they no longer
+    occur in parallel:
+
+        do_fetch[lockfiles] += "${TMPDIR}/myfetch.lock"
+
+    The name isn't critical, it just needs to be the same in all of the
+    recipes you wish to have participate in this exclusive fetching.
+
+    https://lists.yoctoproject.org/pipermail/yocto/2015-July/025418.html
 
 
 ==============================================================================

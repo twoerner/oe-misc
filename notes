@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    42. Adding kernel modules
     41. Inter-task/recipe locks (e.g. restricting the number of fetches)
     40. Pretty buildstats charts
     39. Add a full python to the SDK
@@ -48,6 +49,20 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+
+==============================================================================
+42. Adding kernel modules
+
+    By default no kernel modules are included in an image, which allows you to
+    choose which ones (individually) to package. If you want to add all the
+    default modules to an image:
+
+        MACHINE_EXTRA_RRECOMMENDS = " kernel-modules"
+
+    to machine.conf (or local.conf?). To select modules individually use:
+
+        IMAGE_INSTALL += "kernel-module-<name>"
 
 
 ==============================================================================

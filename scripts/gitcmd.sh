@@ -66,6 +66,7 @@ if [ -n "$FAILED" -a "$GITCMD" = "pull" ]; then
 		git clone $REMOTE ${REP}.new
 		if [ $? -eq 0 ]; then
 			mkdir -p FAILED
+			rm -fr FAILED/$REP
 			mv $REP FAILED
 			mv ${REP}.new $REP
 		else

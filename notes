@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    43. Switch to systemd
     42. Adding kernel modules
     41. Inter-task/recipe locks (e.g. restricting the number of fetches)
     40. Pretty buildstats charts
@@ -49,6 +50,17 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+
+==============================================================================
+43. Switch to systemd
+
+    Add the following the local.conf:
+
+        DISTRO_FEATURES_append = " systemd"
+        DISTRO_FEATURES_BACKFILL_CONSIDERED += "sysvinit"
+        VIRTUAL-RUNTIME_init_manager = "systemd"
+        VIRTUAL-RUNTIME_initscripts = "systemd-compat-units"
 
 
 ==============================================================================

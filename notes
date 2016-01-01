@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    44. Build for selected architectures only
     43. Switch to systemd
     42. Adding kernel modules
     41. Inter-task/recipe locks (e.g. restricting the number of fetches)
@@ -50,6 +51,31 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+
+==============================================================================
+44. Build for selected architectures only
+
+    To enable specific architectures and disallow all others:
+
+        COMPATIBLE_MACHINE = "(-)"
+        COMPATIBLE_MACHINE_x86 = "(.*)"
+        COMPATIBLE_MACHINE_x86-64 = "(.*)"
+        COMPATIBLE_MACHINE_armv6 = "(.*)"
+        COMPATIBLE_MACHINE_armv7a = "(.*)"
+
+    In this case we allow x86, x86-64, armv6, and armv7, but disallow all
+    others.
+
+    To allow all architectures but turn off specific ones (a sort of
+    "INCOMPATIBLE_MACHINE", if you will...):
+
+        COMPATIBLE_MACHINE_armv4 = "(!.*armv4).*"
+        COMPATIBLE_MACHINE_armv5 = "(!.*armv5).*"
+        COMPATIBLE_MACHINE_mips64 = "(!.*mips64).*"
+
+    Here armv4, armv5, and mips64 are not allowed, but by default anything
+    else is.
 
 
 ==============================================================================

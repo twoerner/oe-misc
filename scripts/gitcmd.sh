@@ -62,7 +62,7 @@ if [ -n "$FAILED" -a "$GITCMD" = "pull" ]; then
 		REP=$(echo $REP | cut -d'/' -f2)
 		echo "re-cloning failed repository $REP"
 		pushd $REP
-			REMOTE=$(git remote -v | grep fetch | head -1 | cut -f2 | cut -d' ' -f1)
+			REMOTE=$(git remote -v | grep origin | grep fetch | head -1 | cut -f2 | cut -d' ' -f1)
 		popd
 		git clone $REMOTE ${REP}.new
 		if [ $? -eq 0 ]; then

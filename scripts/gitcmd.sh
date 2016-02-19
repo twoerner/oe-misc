@@ -7,6 +7,7 @@ fi
 GITCMD="$1"
 
 FAILED=""
+ALLUPTODATE=0 # 0->yes 1->no
 
 for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	DIR=`dirname $GITDIR`
@@ -20,6 +21,17 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 
 	echo "working in $DIR"
 	pushd $DIR > /dev/null
+
+	# check if this repository is already up-to-date
+	if [ $ALLUPTODATE -eq 0 ]; then
+		if [ "$GITCMD" = "pull" ]; then
+			OUTPUT=$(git fetch --dry-run 2>&1)
+			if [ -n "$OUTPUT" ]; then
+				ALLUPTODATE=1
+			fi
+		fi
+	fi
+
 	COUNT=0
 	while [ 1 ]; do
 		echo "attempt $COUNT"
@@ -74,4 +86,11 @@ if [ -n "$FAILED" -a "$GITCMD" = "pull" ]; then
 			echo "clone failure on $REP"
 		fi
 	done
+fi
+
+if [ "$GITCMD" = "pull" ]; then
+	if [ $ALLUPTODATE -eq 0 ]; then
+		echo "All repositories are up-to-date"
+		exit 255
+	fi
 fi

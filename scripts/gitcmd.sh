@@ -4,7 +4,7 @@ if [ -z "$1" ]; then
 	echo "required git command argument missing"
 	exit 1
 fi
-GITCMD="$1"
+GITCMD=$*
 
 FAILED=""
 ALLUPTODATE=0 # 0->yes 1->no
@@ -35,7 +35,7 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	COUNT=0
 	while [ 1 ]; do
 		echo "attempt $COUNT"
-		git "$GITCMD"
+		git $GITCMD
 		if [ $? -ne 0 ]; then
 			COUNT=`expr $COUNT + 1`
 			if [ $COUNT -gt 10 ]; then

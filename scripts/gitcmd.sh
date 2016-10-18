@@ -63,6 +63,8 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 		fi
 	fi
 
+	echo "...done with $DIR"
+
 	popd > /dev/null
 	echo ""
 done

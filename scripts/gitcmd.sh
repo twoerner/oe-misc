@@ -10,7 +10,7 @@ FAILED=""
 ALLUPTODATE=0 # 0->yes 1->no
 
 for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
-	DIR=`dirname $GITDIR`
+	DIR=`dirname $GITDIR | cut -d'/' -f2`
 
 	# check this isn't a build directory
 	echo $DIR | grep "build/tmp" > /dev/null 2>&1

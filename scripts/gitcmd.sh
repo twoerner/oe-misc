@@ -9,8 +9,22 @@ GITCMD=$*
 FAILED=""
 ALLUPTODATE=0 # 0->yes 1->no
 
+GITCMDIGNORE=""
+if [ -f GITCMDIGNORE ]; then
+	GITCMDIGNORE=$(cat GITCMDIGNORE)
+fi
+
 for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	DIR=`dirname $GITDIR | cut -d'/' -f2`
+
+	# check if we should ignore this directory
+	echo $GITCMDIGNORE | grep $DIR > /dev/null 2>&1
+	if [ $? -eq 0 ]; then
+		echo "ignoring \"$DIR\" due to GITCMDIGNORE"
+		echo "...done with $DIR"
+		echo ""
+		continue
+	fi
 
 	# check this isn't a build directory
 	echo $DIR | grep "build/tmp" > /dev/null 2>&1

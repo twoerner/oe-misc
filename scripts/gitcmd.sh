@@ -30,6 +30,8 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	echo $DIR | grep "build/tmp" > /dev/null 2>&1
 	if [ $? -eq 0 ]; then
 		echo "skipping build dir: $DIR"
+		echo "...done with $DIR"
+		echo ""
 		continue
 	fi
 

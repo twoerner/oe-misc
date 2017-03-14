@@ -1068,10 +1068,12 @@ Index:
     A couple really nice ways to see recipe dependency information are:
 
         for a full gui tool:
-            $ bitbake -u depexp -g <image>
+            $ bitbake -u taskexp -g <image>
 
         or for just plain text files:
             $ bitbake -g <image>
+
+    NOTE: "taskexp" used to be "depexp"
 
 ==============================================================================
 10. How to restart the build when a recipe fails

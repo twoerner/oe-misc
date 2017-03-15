@@ -48,21 +48,7 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 		fi
 	fi
 
-	COUNT=0
-	while [ 1 ]; do
-		echo "attempt $COUNT"
-		git $GITCMD
-		if [ $? -ne 0 ]; then
-			COUNT=`expr $COUNT + 1`
-			if [ $COUNT -gt 10 ]; then
-				echo "giving up on $DIR"
-				FAILED="$FAILED $DIR"
-				break
-			fi
-		else
-			break
-		fi
-	done
+	git $GITCMD
 
 	if [ x"$GITCMD" = x"pull" ]; then
 		DIRNAME=$(basename $(pwd))

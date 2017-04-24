@@ -46,7 +46,7 @@ Index:
      9. How to modify the autotool ./configure options
      8. How to add packages to an image
      7. How to build an image with an -rt kernel
-     6. Special notes for various layers
+     6. - removed -
      5. Quick start instructions
      4. How can I just grab all the necessary files from the net?
      3. What images are available from which to choose?
@@ -1201,16 +1201,6 @@ Index:
     NOTE: that it is not necessary to use the "core-image-rt" target in order
     to build a kernel with -rt if you've already configured your build to use
     an -rt kernel. This target simply adds more "-rt" things in the image.
-
-==============================================================================
- 6. Special notes for various layers
-
-  meta-texasinstruments:
-
-    if you add meta-texasinstruments you'll probably have to add the following
-    to conf/local.conf:
-
-            BBMASK = ".*/meta-ti/recipes-misc/"
 
 ==============================================================================
  5. Quick start instructions

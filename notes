@@ -1046,7 +1046,15 @@ Index:
 13. Ignoring certain configuration items
 
     To get bitbake to ignore certain recipes/paths/layers/patterns edit/set
-    a BBMASK variable in your configuration. For an example, see item #6.
+    a BBMASK variable in your configuration.
+
+    Since 2.1 it's easier and safer to construct BBMASK as a set of
+    space-separated expressions rather than trying to append to a single
+    regex.
+
+    e.g.
+
+        BBMASK += "qemu_qoriq.bb"
 
 ==============================================================================
 12. To obtain a list of supported output image types

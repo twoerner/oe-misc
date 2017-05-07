@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    46. How to make a recipe MACHINE-specific
     45. Multilib build (mix 64- and 32-bit)
     44. Build for selected architectures only
     43. Switch to systemd
@@ -53,6 +54,11 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+46. How to make a recipe MACHINE-specific
+
+    PACKAGE_ARCH = "${MACHINE_ARCH}"
 
 ==============================================================================
 45. Multilib build (mix 64- and 32-bit)

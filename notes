@@ -215,6 +215,13 @@ Index:
 
         IMAGE_POSTPROCESS_COMMAND
 
+    e.g. remove /etc/version from image:
+
+        remove_etc_version() {
+            rm ${IMAGE_ROOTFS}${sysconfdir}/version
+        }
+        ROOTFS_POSTPROCESS_COMMAND += "remove_etc_version ; "
+
 ==============================================================================
 35. Tasks
 

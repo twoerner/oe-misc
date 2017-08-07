@@ -1287,12 +1287,11 @@ Index:
 ==============================================================================
  4. How can I just grab all the necessary files from the net?
 
-    From http://www.crashcourse.ca/wiki/index.php/Yocto_FAQ:
+    OLD:
+        $ bitbake -c fetchall <target-image>
 
-        How can I ask bitbake to just fetch all the source I need if I
-        want to build off-line later?
-
-            $ bitbake -c fetchall <target-image>
+    newer/more recent:
+        $ bitbake <target/image> --runall fetch
 
 ==============================================================================
  3. What images are available from which to choose?

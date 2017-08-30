@@ -38,9 +38,11 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	echo "working in $DIR"
 	pushd $DIR > /dev/null
 
-	# display git version (before)
+	# display git version and branch (before)
 	echo -n "  current HEAD (before): "
 	git rev-parse HEAD
+	echo -n "  branch: "
+	git rev-parse --abbrev-ref HEAD
 
 	# check if this repository is already up-to-date
 	if [ $ALLUPTODATE -eq 0 ]; then
@@ -69,9 +71,11 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 		fi
 	fi
 
-	# display git version (after)
+	# display git version and branch (after)
 	echo -n "  current HEAD (after):  "
 	git rev-parse HEAD
+	echo -n "  branch: "
+	git rev-parse --abbrev-ref HEAD
 
 	echo "...done with $DIR"
 

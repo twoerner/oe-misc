@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    47. How to ask for a given version
     46. How to make a recipe MACHINE-specific
     45. Multilib build (mix 64- and 32-bit)
     44. Build for selected architectures only
@@ -54,6 +55,16 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+47. How to ask for a given version
+
+    PREFERRED_VERSION_<package-name> = "numbers%"
+
+    e.g.
+
+        PREFERRED_VERSION_tpm2-tss = "git%"
+        PREFERRED_VERSION_gzip-native = "1.8%"
 
 ==============================================================================
 46. How to make a recipe MACHINE-specific

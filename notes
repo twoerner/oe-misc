@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    49. Removing busybox
     48. Use local time for timestamps
     47. How to ask for a given version
     46. How to make a recipe MACHINE-specific
@@ -55,6 +56,19 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+
+==============================================================================
+49. Removing busybox
+
+    Example from someone's distro config, but maybe it works in local.conf
+    too?
+
+        VIRTUAL-RUNTIME_base-utils = ""
+        ALTERNATIVE_PRIORITY_pn-busybox = "1"
+
+    The priority setting makes bitbake pull in alternatives from util-linux /
+    coreutils when appropriate.
 
 
 ==============================================================================

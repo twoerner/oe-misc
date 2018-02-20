@@ -293,6 +293,11 @@ Index:
     instead of "*.so.<maj><min>". In this case the default classes will scoop
     up these "*.so" files and put them in the -dev package. To avoid this:
 
+        FILES_SOLIBSDEV = ""
+        FILES_${PN} += "${libdir}/*"
+
+    Here are some older incantations:
+
         FILES_${PN} += "${libdir}/*.so"
         FILES_SOLIBSDEV = ""
         INSANE_SKIP_${PN} += "dev-so"

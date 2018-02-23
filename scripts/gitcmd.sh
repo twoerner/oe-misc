@@ -18,7 +18,7 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	DIR=`dirname $GITDIR | cut -d'/' -f2`
 
 	# check if we should ignore this directory
-	echo $GITCMDIGNORE | grep $DIR > /dev/null 2>&1
+	echo $GITCMDIGNORE | grep -w $DIR > /dev/null 2>&1
 	if [ $? -eq 0 ]; then
 		echo "ignoring \"$DIR\" due to GITCMDIGNORE"
 		echo "...done with $DIR"

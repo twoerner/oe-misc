@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    50. Forcing a stuck variable (set in BSP, etc)
     49. Removing busybox
     48. Use local time for timestamps
     47. How to ask for a given version
@@ -57,6 +58,16 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+50. Forcing a stuck variable (set in BSP, etc)
+
+    Sometimes a layer will set a variable by using an equal sign, meaning that
+    it is now stuck at whatever value that layer set it to. Normally this
+    variable would now not be able to be adjusted in conf/local.conf. However
+    there is an overriding syntax to unstick such variables:
+
+        PREFERRED_VERSION_linux-riscv_forcevariable = "4.15%"
 
 ==============================================================================
 49. Removing busybox

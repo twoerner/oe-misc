@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    51. Adding something to eSDK
     50. Forcing a stuck variable (set in BSP, etc)
     49. Removing busybox
     48. Use local time for timestamps
@@ -57,6 +58,15 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+
+==============================================================================
+51. Adding something to eSDK
+
+    SDK_TARGETS += "cmake-native:do_populate_sysroot \
+                    python3-native:do_populate_sysroot"
+
+    See https://bugzilla.yoctoproject.org/show_bug.cgi?id=10600
 
 
 ==============================================================================

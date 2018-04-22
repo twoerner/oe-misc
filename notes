@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    52. bbappend for target only
     51. Adding something to eSDK
     50. Forcing a stuck variable (set in BSP, etc)
     49. Removing busybox
@@ -58,6 +59,16 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+
+==============================================================================
+52. bbappend for target only
+
+    By default, a .bbappend file will patch both the native and target
+    versions of the build. How do I modify it so that it only affects the
+    target build and not the native build?
+
+        SRC_URI_append_class-target = "file://..."
 
 
 ==============================================================================

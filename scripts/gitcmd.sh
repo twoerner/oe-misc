@@ -58,7 +58,7 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 
 	if [ x"$GITCMD" = x"pull" ]; then
 		DIRNAME=$(basename $(pwd))
-		if [ x"$DIRNAME" = x"meta-openembedded" -o x"$DIRNAME" = x"openembedded-core" -o x"$DIRNAME" = x"meta-poky" ]; then
+		if [ x"$DIRNAME" = x"meta-openembedded" -o x"$DIRNAME" = x"openembedded-core" -o x"$DIRNAME" = x"poky" ]; then
 			git remote -v | grep contrib > /dev/null 2>&1
 			if [ $? -eq 0 ]; then
 				echo "fetching contrib"

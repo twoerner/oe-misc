@@ -57,7 +57,7 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	git $GITCMD
 
 	if [ x"$GITCMD" = x"pull" ]; then
-		git remote -v | grep contrib > /dev/null 2>&1
+		git remote -v | grep "^contrib" > /dev/null 2>&1
 		if [ $? -eq 0 ]; then
 			echo "fetching contrib"
 			git fetch contrib

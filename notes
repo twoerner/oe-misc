@@ -1,6 +1,8 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    55. turn off PNBLACKLIST
+    54. LICENSE_FLAGS_WHITELIST
     53. x86 ilp32 build
     52. bbappend for target only
     51. Adding something to eSDK
@@ -63,9 +65,41 @@ Index:
 
 
 ==============================================================================
+55. turn off PNBLACKLIST
+
+    $ bitbake mpv
+        ERROR: Nothing PROVIDES 'mpv'
+        mpv was skipped: Recipe is blacklisted: Needs forward porting to use python3
+
+    create an append in workspace
+
+        $ devtool create-workspace
+        vi workspace/appends/mpv_%.bbappend
+            PNBLACKLIST[mpv] = ""
+
+    there are references saying that simply adding
+        PNBLACKLIST[mpv] = ""
+    to conf/local.conf will work on its own, but I haven't been able to see
+    that happen. The only thing that I find working is the bbappend.
+
+
+==============================================================================
+54. LICENSE_FLAGS_WHITELIST
+
+    $ bitbake mpv
+        ERROR: Nothing PROVIDES 'mpv'
+        mpv was skipped: because it has a restricted license 'commercial'. Which is not whitelisted in LICENSE_FLAGS_WHITELIST
+
+    conf/local.conf:
+
+        LICENSE_FLAGS_WHITELIST = "commercial"
+
+
+==============================================================================
 53. x86 ilp32 build
 
     use MACHINE="qemux86-64" and set DEFAULTTUNE="core2-64-x32"
+
 
 ==============================================================================
 52. bbappend for target only

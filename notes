@@ -793,8 +793,26 @@ Index:
     sys     0m22.307s
 
 
+    Currently, OE has great support for using bmap. Simply:
+
+        1. add "wic.bmap" to your created images:
+
+            IMAGE_FSTYPES += "wic.bmap"
+
+        2. build the bmap native tool (this only has to be done once):
+
+            $ bitbake bmap-tools-native -c addto_recipe_sysroot
+
+        3. insert the uSD card and flash the image:
+
+            $ oe-run-native \
+                bmap-tools-native bmaptool copy \
+                tmp-glibc/deploy/images/rock-pi-4/core-image-weston-rock-pi-4.wic \
+                /dev/sdk
+
 
     [1] https://source.tizen.org/documentation/articles/bmaptool
+
 
 ==============================================================================
 22. Cleaning up

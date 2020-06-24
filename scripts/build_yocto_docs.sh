@@ -1,6 +1,6 @@
 #!/bin/bash
 
-YOCTODOCS="adt-manual bsp-guide dev-manual kernel-dev profile-manual ref-manual sdk-manual toaster-manual"
+YOCTODOCS="adt-manual bsp-guide dev-manual kernel-dev profile-manual ref-manual sdk-manual test-manual toaster-manual"
 
 echo "yocto docs"
 pushd yocto-docs/documentation > /dev/null 2>&1

@@ -1,6 +1,9 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    59. GPLv3 tooling, but not in image
+    58. python3
+    57. xz OOM
     56. Adding FORTRAN support
     55. Turn off PNBLACKLIST
     54. LICENSE_FLAGS_WHITELIST
@@ -63,6 +66,54 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+
+==============================================================================
+    59. GPLv3 tooling, but not in image
+
+    <mcfrisk> bps: you can enable build of some GPLv3 recipes, e.g. tooling
+              but mask their binary packages out from images. E.g. in distro config:
+              WHITELIST_GPL-3.0 += "binutils" and PACKAGE_EXCLUDE += "binutils-dbg
+              binutils-staticdev binutils-dev binutils-doc binutils-locale libbfd
+              binutils"
+
+    <mcfrisk> bps: one more example from my distro config:
+              INCOMPATIBLE_LICENSE_append += " GPLv3 GPLv3+ LGPLv3 LGPLv3+",
+              WHITELIST_GPL-3.0 += "gdb", PACKAGE_EXCLUDE += "gdbserver gdb-dbg
+              gdb-staticdev gdb-dev gdb-doc gdb-locale gdb"
+
+==============================================================================
+    58. python3
+
+    the configuration error:
+
+        | configure: error: python3-config not found…
+
+    is fixed by:
+
+        inherit python3native
+
+    the compile error:
+
+        | fatal error: Python.h: No such file or directory
+        | #include <Python.h>
+        |          ^^^^^^^^^^
+
+    is fixed by:
+
+        DEPENDS += "python3"
+
+
+==============================================================================
+    57. xz OOM
+
+    If a build fails due to OOM killing an xz process, try tweaking
+
+        XZ_MEMLIMIT
+
+    or
+
+        XZ_DEFAULTS = "--memlimit=10% --threads=8"
 
 
 ==============================================================================

@@ -139,7 +139,7 @@ fi
 
 if [ "$GITCMD" = "pull" ]; then
 	if [ $ALLUPTODATE -eq 0 ]; then
-		echo "All repositories are up-to-date"
+		echo "gitcmd.sh: All repositories are up-to-date"
 		exit 255
 	fi
 fi

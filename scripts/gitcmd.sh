@@ -7,7 +7,36 @@ fi
 GITCMD=$*
 
 FAILED=""
+STATUS=0
+BADDIRS=""
 ALLUPTODATE=0 # 0->yes 1->no
+
+# cmdline args
+KEEPGOING=0
+TEMP=$(getopt -o 'k' --long 'keep-going' -n 'gitcmd.sh' -- "$@")
+if [ $? -ne 0 ]; then
+	echo "getopt error"
+	exit 1
+fi
+eval set -- "$TEMP"
+unset TEMP
+while true; do
+	case "$1" in
+		'-k'|'--keep-going')
+			KEEPGOING=1
+			shift
+			continue
+			;;
+		'--')
+			shift
+			break
+			;;
+		*)
+			echo "getopt internal error"
+			exit 1
+			;;
+	esac
+done
 
 GITCMDIGNORE=""
 if [ -f GITCMDIGNORE ]; then
@@ -55,6 +84,13 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	fi
 
 	git $GITCMD
+	if [ $? -ne 0 ]; then
+		if [ $KEEPGOING -ne 1 ]; then
+			exit 1
+		fi
+		STATUS=$((STATUS+1))
+		BADDIRS="$BADDIRS $DIR"
+	fi
 
 	if [ x"$GITCMD" = x"pull" ]; then
 		git remote -v | grep "^contrib" > /dev/null 2>&1
@@ -106,4 +142,9 @@ if [ "$GITCMD" = "pull" ]; then
 		echo "All repositories are up-to-date"
 		exit 255
 	fi
+fi
+
+if [ $STATUS -ne 0 ]; then
+	echo "gitcmd.sh: bad dirs -> $BADDIRS"
+	exit $STATUS
 fi

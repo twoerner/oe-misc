@@ -4,7 +4,6 @@ if [ -z "$1" ]; then
 	echo "required git command argument missing"
 	exit 1
 fi
-GITCMD=$*
 
 FAILED=""
 STATUS=0
@@ -37,6 +36,7 @@ while true; do
 			;;
 	esac
 done
+GITCMD=$*
 
 GITCMDIGNORE=""
 if [ -f GITCMDIGNORE ]; then

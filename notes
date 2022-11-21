@@ -262,11 +262,22 @@ Index:
 43. Switch to systemd
 
     Add the following the local.conf:
+    (prior to 3.0-zeus)
 
         DISTRO_FEATURES_append = " systemd"
         DISTRO_FEATURES_BACKFILL_CONSIDERED += "sysvinit"
         VIRTUAL-RUNTIME_init_manager = "systemd"
         VIRTUAL-RUNTIME_initscripts = "systemd-compat-units"
+
+    3.0-zeus and later:
+
+        INIT_MANAGER = "systemd"
+
+    other potential settings for INIT_MANAGER include:
+        none
+        sysvinit
+        systemd
+        mdev-busybox
 
 
 ==============================================================================

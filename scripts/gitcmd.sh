@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# colours
+GITDIR_C="$(tput setaf 0)$(tput setab 3)"
+INV="$(tput rev)"
+NC="$(tput sgr0)"
+
 indent() {
 	sed 's/^/\t/';
 }
@@ -10,9 +15,13 @@ removeblanklines() {
 # display git version and branch
 git_version_and_branch() {
 	echo -n "current HEAD ($1): " | indent
+	echo -ne ${INV}
 	git rev-parse HEAD
+	echo -ne ${NC}
 	echo -n "branch: " | indent
+	echo -ne ${INV}
 	git rev-parse --abbrev-ref HEAD
+	echo -ne ${NC}
 }
 
 if [ -z "$1" ]; then
@@ -60,7 +69,7 @@ fi
 
 for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	DIR=`dirname $GITDIR | cut -d'/' -f2`
-	echo "working in $DIR"
+	echo -e "${GITDIR_C}working in $DIR${NC}"
 
 	# check if we should ignore this directory
 	echo $GITCMDIGNORE | grep -w $DIR > /dev/null 2>&1

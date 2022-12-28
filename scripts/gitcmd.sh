@@ -1,10 +1,17 @@
 #!/bin/bash
 
+indent() {
+	sed 's/^/\t/';
+}
+removeblanklines() {
+	sed '/^[[:space:]]*$/d';
+}
+
 # display git version and branch
 git_version_and_branch() {
-	echo -n "  current HEAD ($1): "
+	echo -n "current HEAD ($1): " | indent
 	git rev-parse HEAD
-	echo -n "  branch: "
+	echo -n "branch: " | indent
 	git rev-parse --abbrev-ref HEAD
 }
 
@@ -87,7 +94,7 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 		fi
 	fi
 
-	git $GITCMD
+	git $GITCMD 2>&1 | removeblanklines | indent | indent
 	if [ $? -ne 0 ]; then
 		if [ $KEEPGOING -ne 1 ]; then
 			exit 1
@@ -99,18 +106,18 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	if [ x"$GITCMD" = x"pull" ]; then
 		git remote -v | grep "^contrib" > /dev/null 2>&1
 		if [ $? -eq 0 ]; then
-			echo "fetching contrib"
-			git fetch contrib
+			echo "fetching contrib" | indent
+			git fetch contrib | removeblanklines | indent | indent
 
 			# cleanup stale branches
-			echo "pruning contrib branches"
-			git remote prune contrib
+			echo "pruning contrib branches" | indent
+			git remote prune contrib | removeblanklines | indent | indent
 		fi
 	fi
 
 	git_version_and_branch "after"
 
-	echo "...done with $DIR"
+	echo "...done with $DIR" | indent
 
 	popd > /dev/null
 	echo ""

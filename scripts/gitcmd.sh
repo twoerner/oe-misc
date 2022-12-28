@@ -60,12 +60,13 @@ fi
 
 for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	DIR=`dirname $GITDIR | cut -d'/' -f2`
+	echo "working in $DIR"
 
 	# check if we should ignore this directory
 	echo $GITCMDIGNORE | grep -w $DIR > /dev/null 2>&1
 	if [ $? -eq 0 ]; then
-		echo "ignoring \"$DIR\" due to GITCMDIGNORE"
-		echo "...done with $DIR"
+		echo "ignoring \"$DIR\" due to GITCMDIGNORE" | indent
+		echo "...done with $DIR" | indent
 		echo ""
 		continue
 	fi
@@ -73,13 +74,12 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	# check this isn't a build directory
 	echo $DIR | grep "build/tmp" > /dev/null 2>&1
 	if [ $? -eq 0 ]; then
-		echo "skipping build dir: $DIR"
-		echo "...done with $DIR"
+		echo "skipping build dir: $DIR" | indent
+		echo "...done with $DIR" | indent
 		echo ""
 		continue
 	fi
 
-	echo "working in $DIR"
 	pushd $DIR > /dev/null
 
 	git_version_and_branch "before"

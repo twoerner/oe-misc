@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# display git version and branch
+git_version_and_branch() {
+	echo -n "  current HEAD ($1): "
+	git rev-parse HEAD
+	echo -n "  branch: "
+	git rev-parse --abbrev-ref HEAD
+}
+
 if [ -z "$1" ]; then
 	echo "required git command argument missing"
 	exit 1
@@ -67,11 +75,7 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	echo "working in $DIR"
 	pushd $DIR > /dev/null
 
-	# display git version and branch (before)
-	echo -n "  current HEAD (before): "
-	git rev-parse HEAD
-	echo -n "  branch: "
-	git rev-parse --abbrev-ref HEAD
+	git_version_and_branch "before"
 
 	# check if this repository is already up-to-date
 	if [ $ALLUPTODATE -eq 0 ]; then
@@ -104,11 +108,7 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 		fi
 	fi
 
-	# display git version and branch (after)
-	echo -n "  current HEAD (after):  "
-	git rev-parse HEAD
-	echo -n "  branch: "
-	git rev-parse --abbrev-ref HEAD
+	git_version_and_branch "after"
 
 	echo "...done with $DIR"
 

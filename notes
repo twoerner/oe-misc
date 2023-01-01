@@ -141,6 +141,19 @@ Index:
             RouteMetric=10
             ClientIdentifier=mac
 
+    NOTE: In the same way that IPv4 addresses have private ranges (e.g.
+          192.168.x.y/24 and 10.x.y.z/8) so too do MAC address have private
+          ranges (or "locally administered address ranges" - LAAR). A LAAR is
+          determined by the second least significant bit of the most
+          significant byte of the MAC address. If it is 0 then the MAC address
+          is universal, otherwise it's a LAAR. Unicast LAAR addresses have
+          one of the following 4 patterns:
+
+                 _2:__:__:__:__:__
+                 _6:__:__:__:__:__
+                 _a:__:__:__:__:__
+                 _e:__:__:__:__:__
+
 
 ==============================================================================
 59. GPLv3 tooling, but not in image

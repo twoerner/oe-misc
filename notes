@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    60. static MAC address
     59. GPLv3 tooling, but not in image
     58. python3
     57. xz OOM
@@ -66,6 +67,79 @@ Index:
      3. What images are available from which to choose?
      2. General task list
      1. How to obtain the list of tasks
+
+
+==============================================================================
+60. static MAC address
+
+    A lot of embedded boards don't come with static MAC addressess assigned
+    from the manufacturer and stored in EEPROM. Therefore each time the board
+    boots up, it gets a quasi-randomly generated MAC address. This makes it
+    difficult to use DHCP to assign IP addresses to board if their MAC
+    addresses aren't static.
+
+    The method to fix this depends on the init system in use.
+
+    sysvinit: modify /etc/network/interfaces
+        .
+        └── recipes-core
+            └── init-ifupdown
+                ├── files
+                │   └── imx233-olinuxino-maxi
+                │       └── interfaces
+                └── init-ifupdown_%.bbappend
+
+        recipes-core/init-ifupdown/init-ifupdown_%.bbappend:
+            FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+
+        recipes-core/init-ifupdown/files/<machine>/interfaces:
+            # /etc/network/interfaces -- configuration file for ifup(8), ifdown(8)
+
+            # The loopback interface
+            auto lo
+            iface lo inet loopback
+
+            auto eth0
+            iface eth0 inet dhcp
+                    hwaddress ether e6:73:76:69:51:42
+
+    systemd: create /etc/systemd/network/*.network file
+        .
+        └── recipes-core
+            └── systemd
+                ├── files
+                │   └── rock-pi-e
+                │       └── 50-eth1.network
+                └── systemd_%.bbappend
+
+        NOTE: the "50-" part of "50-eth1.network" is necessary!
+        NOTE: the ".network" part of "50-eth1.network" is necessary!
+
+        recipes-core/systemd/systemd_%.bbappend:
+            FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
+
+            SRC_URI:append:rock-pi-e = " file://50-eth1.network"
+
+            do_install:append:rock-pi-e() {
+                    install -d ${D}${sysconfdir}/systemd/network
+                    install -m0644 ${WORKDIR}/50-eth1.network ${D}${sysconfdir}/systemd/network/
+            }
+
+        recipes-core/systemd/files/<machine>/50-eth1.network:
+            [Match]
+            Type=ether
+            Name=eth1
+
+            [Link]
+            MACAddress=e6:73:76:69:51:43
+
+            [Network]
+            DHCP=yes
+
+            [DHCP]
+            UseMTU=yes
+            RouteMetric=10
+            ClientIdentifier=mac
 
 
 ==============================================================================

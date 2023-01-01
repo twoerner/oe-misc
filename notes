@@ -143,7 +143,7 @@ Index:
 
 
 ==============================================================================
-    59. GPLv3 tooling, but not in image
+59. GPLv3 tooling, but not in image
 
     <mcfrisk> bps: you can enable build of some GPLv3 recipes, e.g. tooling
               but mask their binary packages out from images. E.g. in distro config:
@@ -157,7 +157,7 @@ Index:
               gdb-staticdev gdb-dev gdb-doc gdb-locale gdb"
 
 ==============================================================================
-    58. python3
+58. python3
 
     the configuration error:
 
@@ -179,7 +179,7 @@ Index:
 
 
 ==============================================================================
-    57. xz OOM
+57. xz OOM
 
     If a build fails due to OOM killing an xz process, try tweaking
 

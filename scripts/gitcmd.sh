@@ -2,6 +2,7 @@
 
 # colours
 GITDIR_C="$(tput setaf 0)$(tput setab 3)"
+GITDIR_R="$(tput setaf 0)$(tput setab 1)"
 INV="$(tput rev)"
 NC="$(tput sgr0)"
 
@@ -74,7 +75,7 @@ for GITDIR in `find . -maxdepth 2 -name .git -print | grep -v FAILED | sort`; do
 	# check if we should ignore this directory
 	echo $GITCMDIGNORE | grep -w $DIR > /dev/null 2>&1
 	if [ $? -eq 0 ]; then
-		echo "ignoring \"$DIR\" due to GITCMDIGNORE" | indent
+		echo -e "ignoring \"$DIR\" due to ${GITDIR_R}GITCMDIGNORE${NC}" | indent
 		echo "...done with $DIR" | indent
 		echo ""
 		continue

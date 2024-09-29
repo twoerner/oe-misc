@@ -1,6 +1,7 @@
 vim: expandtab ts=4 sts=4 sw=4 textwidth=78 colorcolumn=78
 
 Index:
+    61. add/use a custom LICENSE
     60. static MAC address
     59. GPLv3 tooling, but not in image
     58. python3
@@ -68,6 +69,25 @@ Index:
      2. General task list
      1. How to obtain the list of tasks
 
+
+==============================================================================
+61. add/use a custom LICENSE
+
+    If a recipe in a layer needs a custom license, create the directory:
+
+        ${LAYERDIR}/additional-licenses
+
+    In that directory create a file whose name is the license name (to be
+    put in LICENSE = "<license name>") and whose contents is the text of the
+    license itself.
+
+    Then, in that layer's conf/layer.conf add:
+
+        LICENSE_PATH:append = " ${LAYERDIR}/additional-licenses"
+
+    Now, in the recipe(s) in that layer you can do:
+
+        LICENSE = "<new license name>"
 
 ==============================================================================
 60. static MAC address
